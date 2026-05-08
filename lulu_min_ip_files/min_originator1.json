@@ -1,0 +1,94 @@
+{
+    "transactionPayment": {
+        "InterbankPaymentTransaction": {
+            "TransactionHeader": {
+                "TransctionType": "FX",
+                "TransactionSubType": "FOREX RETAIL",
+                "ProcessingDate": "2025-11-27"
+            },
+            "TransactionIdentification": {
+                "TransactionID": "TXN2025110500001"
+            },
+            "BeneficiaryDetails": {
+                "BeneficiaryAccountNumber": "NGA989860987",
+                "BeneficiaryCustomerID": "BENF1234001"
+            },
+            "OrderingPartyDetails": {
+                "OrderingPartyAccountNumber": "AE0703312346",
+                "OrderingPartyCustomerID": "CUST1234001"
+            },
+            "Amount": {
+                "InstructedAmount": {
+                    "@Currency": "AED",
+                    "cdata": "5000.00"
+                }
+            }
+        },    "TenantDetails":{
+		"tenant_id":"luluexchange"},
+        "OrderingParty": {
+            "PartyIdentification": {
+                "Name": "SALMAN KHAN",
+                "PartyType": "Individual"
+            },
+            "PersonalDetails": {
+                "Nationality": "AFG",
+                "ResidenceCountry": "ARE",
+                "Occupation": "Construction Supervisor"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "Passport",
+                "IssuingCountry": "AFG"
+            },
+            "AdditionalIdentification": {
+                "DocumentType": "Residence Visa"
+            },
+            "Address": {
+                "Country": "AFG"
+            }
+        },
+        "Beneficiary": {
+            "PartyIdentification": {
+                "Name": "SADIQ KHAN",
+                "PartyType": "INDIVIDUAL"
+            },
+            "PersonalDetails": {
+                "Nationality": "USD"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "National ID",
+                "IssuingCountry": "USD"
+            },
+            "Account": {
+                "AccountName": "SADIQ KHAN"
+            },
+            "Address": {
+                "Country": "USD"
+            },
+            "Bank": {
+                "BIC": "USCAAFKAXXX"
+            }
+        },
+        "PaymentDetails": {
+            "PaymentPurpose": {
+                "CategoryCode": "PERS"
+				}
+},
+        "OperationalData": {
+            "ChannelInformation": {
+                "ChannelType": "MOBILE_BANKING"
+}
+},
+"HistoricalContext": {
+            "CustomerProfile": {
+                "GeographicFocus": "UAE_USD"
+            }
+},
+        "ComplianceData": {
+            "RiskAssessment": {
+                "CustomerRiskRating": "MEDIUM"
+            }
+        }
+    }
+}
+
+ 

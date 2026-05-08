@@ -1,0 +1,118 @@
+openapi: 3.0.3
+info:
+  title: FacctGuard Transaction Processing API
+  description: |
+    Ab Initio continuous HTTP service that receives transaction data,
+    processes it through rule execution, and returns alert IDs
+    when suspicious patterns are detected.
+  version: 1.0.0
+
+servers:
+  - url: https://api-dev-saas.facctum.com/transactionmonitoring
+    description: Development environment
+
+paths:
+  /api/facctguard:
+    post:
+      summary: Process transaction for AML/fraud detection
+      description: |
+        Receives transaction payment data, runs it through the
+        Ab Initio rule execution engine, and returns alert details
+        if any rules are triggered.
+
+        **Sample cURL:**
+        ```bash
+        curl -X POST -H "Content-Type: application/json" \
+          http://localhost:9090/api/facctguard \
+          -d @card_enumeration_set1_msg7.json
+        ```
+      operationId: processTransaction
+      tags:
+        - Transaction Processing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas/facctguard-schemas.yaml#/TransactionRequest'
+      responses:
+        '200':
+          description: Transaction processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/facctguard-schemas.yaml#/SuccessResponse'
+              examples:
+                alert_generated:
+                  summary: Alert generated (Red)
+                  value:
+                    transaction_id: "TXN20260305561207"
+                    tenant_id: "facctum"
+                    message: "There are 1 alerts raised against this transaction"
+                    status: "Red"
+                    alert_details:
+                      - alert_id: "ALT-20260421080327-740233"
+                        alert_risk_score: 0.52
+                        alert_environment: "PARALLEL"
+                no_alert:
+                  summary: No alert (Green)
+                  value:
+                    transaction_id: "TXN20260305561207"
+                    tenant_id: "facctum"
+                    message: "No alerts raised against this transaction"
+                    status: "Green"
+                    alert_details: []
+        '400':
+          description: Invalid request - malformed JSON, invalid data, or missing rules
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/facctguard-schemas.yaml#/ErrorResponse'
+              examples:
+                parse_error:
+                  summary: JSON parse error
+                  value:
+                    component: "Rule_Execution.Extract_JSON_Message.000"
+                    message: "Execution failed with error. Please check the detailed_error column for the exact error"
+                    detailed_error: "Line 1: Unexpected token 'c' at 'country_risk.json'. Missing a '\"'?"
+                invalid_date:
+                  summary: Invalid processing date format
+                  value:
+                    component: "Rule_Execution.Rule_Engine.Data_Validation_Trans_Risk_scoring.RFMT_Validate_Data.000"
+                    message: "Execution failed with error. Please check the detailed_error column for the exact error"
+                    detailed_error: "Program-generated error in assignment for out.ProcessingDate. Invalid processing Date"
+                no_rules:
+                  summary: No rules configured for tenant
+                  value:
+                    component: "Rule_Execution.Rule_Engine.Rule_Execution.RFMT_Apply_rules.000"
+                    message: "Execution failed with error. Please check the detailed_error column for the exact error"
+                    detailed_error: "No rules available for the current tenant facctum"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/facctguard-schemas.yaml#/ErrorResponse'
+
+  /api/healthcheck:
+    get:
+      summary: Health check endpoint
+      description: Returns a simple text message indicating the service is running
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "API is up and running"
+        '503':
+          description: Service is unavailable
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Service unavailable"

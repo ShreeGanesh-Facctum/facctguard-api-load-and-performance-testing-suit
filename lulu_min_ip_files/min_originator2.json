@@ -1,0 +1,94 @@
+{
+    "transactionPayment": {
+        "InterbankPaymentTransaction": {
+            "TransactionHeader": {
+                "TransctionType": "FX",
+                "TransactionSubType": "FOREX RETAIL",
+                "ProcessingDate": "2025-11-28"
+            },
+            "TransactionIdentification": {
+                "TransactionID": "TXN2025110500002"
+            },
+            "BeneficiaryDetails": {
+                "BeneficiaryAccountNumber": "NGA989860987",
+                "BeneficiaryCustomerID": "BENF1234002"
+            },
+            "OrderingPartyDetails": {
+                "OrderingPartyAccountNumber": "AE0703312346",
+                "OrderingPartyCustomerID": "CUST1234001"
+            },
+            "Amount": {
+                "InstructedAmount": {
+                    "@Currency": "AED",
+                    "cdata": "4900.00"
+                }
+            }
+        },    "TenantDetails":{
+		"tenant_id":"luluexchange"},
+        "OrderingParty": {
+            "PartyIdentification": {
+                "Name": "SALMAN KHAN",
+                "PartyType": "Individual"
+            },
+            "PersonalDetails": {
+                "Nationality": "AFG",
+                "ResidenceCountry": "ARE",
+                "Occupation": "Construction Supervisor"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "Passport",
+                "IssuingCountry": "AFG"
+            },
+            "AdditionalIdentification": {
+                "DocumentType": "Residence Visa"
+            },
+            "Address": {
+                "Country": "AFG"
+            }
+        },
+        "Beneficiary": {
+            "PartyIdentification": {
+                "Name": "SHAH RUKH KHAN",
+                "PartyType": "INDIVIDUAL"
+            },
+            "PersonalDetails": {
+                "Nationality": "SOM"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "National ID",
+                "IssuingCountry": "SOM"
+            },
+            "Account": {
+                "AccountName": "SHAH RUKH KHAN"
+            },
+            "Address": {
+                "Country": "SOM"
+            },
+            "Bank": {
+                "BIC": "SOMCAAFKAXXX"
+            }
+        },
+        "PaymentDetails": {
+            "PaymentPurpose": {
+                "CategoryCode": "PERS"
+				}
+},
+        "OperationalData": {
+            "ChannelInformation": {
+                "ChannelType": "Lulu Money"
+}
+},
+"HistoricalContext": {
+            "CustomerProfile": {
+                "GeographicFocus": "UAE_SOM"
+            }
+},
+        "ComplianceData": {
+            "RiskAssessment": {
+                "CustomerRiskRating": "MEDIUM"
+            }
+        }
+    }
+}
+
+ 

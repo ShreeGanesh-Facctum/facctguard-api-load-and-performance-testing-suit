@@ -1,0 +1,94 @@
+{
+    "transactionPayment": {
+        "InterbankPaymentTransaction": {
+            "TransactionHeader": {
+                "TransctionType": "FX",
+                "TransactionSubType": "FOREX RETAIL",
+                "ProcessingDate": "2025-12-30"
+            },
+            "TransactionIdentification": {
+                "TransactionID": "TXN2025110500008"
+            },
+            "BeneficiaryDetails": {
+                "BeneficiaryAccountNumber": "LBY98986100",
+                "BeneficiaryCustomerID": "BENF1234006"
+            },
+            "OrderingPartyDetails": {
+                "OrderingPartyAccountNumber": "AE0703312349",
+                "OrderingPartyCustomerID": "CUST1234004"
+            },
+            "Amount": {
+                "InstructedAmount": {
+                    "@Currency": "AED",
+                    "cdata": "95000.00"
+                }
+            }
+        },    "TenantDetails":{
+		"tenant_id":"luluexchange"},
+        "OrderingParty": {
+            "PartyIdentification": {
+                "Name": "SAJID KHAN",
+                "PartyType": "Individual"
+            },
+            "PersonalDetails": {
+                "Nationality": "IRN",
+                "ResidenceCountry": "ARE",
+                "Occupation": "Construction Supervisor"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "Passport",
+                "IssuingCountry": "IRN"
+            },
+            "AdditionalIdentification": {
+                "DocumentType": "Residence Visa"
+            },
+            "Address": {
+                "Country": "IRN"
+            }
+        },
+        "Beneficiary": {
+            "PartyIdentification": {
+                "Name": "RASHID KHAN",
+                "PartyType": "INDIVIDUAL"
+            },
+            "PersonalDetails": {
+                "Nationality": "LBY"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "National ID",
+                "IssuingCountry": "LBY"
+            },
+            "Account": {
+                "AccountName": "RASHID KHAN"
+            },
+            "Address": {
+                "Country": "LBY"
+            },
+            "Bank": {
+                "BIC": "LBYCAAFKAXXX"
+            }
+        },
+        "PaymentDetails": {
+            "PaymentPurpose": {
+                "CategoryCode": "PERS"
+				}
+},
+        "OperationalData": {
+            "ChannelInformation": {
+                "ChannelType": "MOBILE_BANKING"
+}
+},
+"HistoricalContext": {
+            "CustomerProfile": {
+                "GeographicFocus": "UAE_LBY"
+            }
+},
+        "ComplianceData": {
+            "RiskAssessment": {
+                "CustomerRiskRating": "MEDIUM"
+            }
+        }
+    }
+}
+
+ 

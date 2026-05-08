@@ -1,0 +1,63 @@
+{
+    "profiles": {
+        "smoke": {
+            "description": "Quick sanity check - 5 requests, 2 concurrent",
+            "total_requests": 5,
+            "concurrency": 2,
+            "ramp_up_seconds": 0,
+            "duration_seconds": 10,
+            "test_types": ["baseline"]
+        },
+        "load": {
+            "description": "Standard load test - 100 requests, 10 concurrent",
+            "total_requests": 100,
+            "concurrency": 10,
+            "ramp_up_seconds": 5,
+            "duration_seconds": 60,
+            "test_types": ["ramp_up", "sustained"]
+        },
+        "stress": {
+            "description": "Stress test - 500 requests, 50 concurrent",
+            "total_requests": 500,
+            "concurrency": 50,
+            "ramp_up_seconds": 10,
+            "duration_seconds": 120,
+            "test_types": ["ramp_up", "spike", "sustained", "stress"]
+        },
+        "endurance": {
+            "description": "Soak test - 1000 requests over 10 minutes",
+            "total_requests": 1000,
+            "concurrency": 20,
+            "ramp_up_seconds": 30,
+            "duration_seconds": 600,
+            "test_types": ["sustained", "recovery"]
+        },
+        "breakpoint": {
+            "description": "Find the breaking point - auto-increment until failure",
+            "total_requests": 2000,
+            "concurrency": 5,
+            "max_concurrency": 200,
+            "concurrency_step": 5,
+            "error_threshold_percent": 10,
+            "ramp_up_seconds": 0,
+            "duration_seconds": 300,
+            "test_types": ["breakpoint"]
+        }
+    },
+    "defaults": {
+        "target_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/facctguard",
+        "healthcheck_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/healthcheck",
+        "auth_url": "https://auth-qa-saas.facctum.com/oauth/token",
+        "tenant_id": "facctum",
+        "auth_client_id": "",
+        "auth_client_secret": "",
+        "auth_audience": "https://api-qa-saas.facctum.com",
+        "timeout_seconds": 30,
+        "pass_fail_criteria": {
+            "max_p95_ms": 2000,
+            "max_p99_ms": 5000,
+            "max_error_rate_percent": 5,
+            "min_throughput_rps": 1
+        }
+    }
+}

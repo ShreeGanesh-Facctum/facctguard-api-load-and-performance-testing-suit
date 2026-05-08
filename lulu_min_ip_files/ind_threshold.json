@@ -1,0 +1,94 @@
+{
+    "transactionPayment": {
+        "InterbankPaymentTransaction": {
+            "TransactionHeader": {
+                "TransctionType": "FX",
+                "TransactionSubType": "FOREX RETAIL",
+                "ProcessingDate": "2025-12-31"
+            },
+            "TransactionIdentification": {
+                "TransactionID": "TXN2025110500011"
+            },
+            "BeneficiaryDetails": {
+                "BeneficiaryAccountNumber": "LBY98986102",
+                "BeneficiaryCustomerID": "BENF1234008"
+            },
+            "OrderingPartyDetails": {
+                "OrderingPartyAccountNumber": "AE0703312353",
+                "OrderingPartyCustomerID": "CUST1234008"
+            },
+            "Amount": {
+                "InstructedAmount": {
+                    "@Currency": "AED",
+                    "cdata": "99999.01"
+                }
+            }
+        },"TenantDetails":{
+		"tenant_id":"luluexchange"},
+        "OrderingParty": {
+            "PartyIdentification": {
+                "Name": "Zayed KHAN",
+                "PartyType": "Individual"
+            },
+            "PersonalDetails": {
+                "Nationality": "TUR",
+                "ResidenceCountry": "ARE",
+                "Occupation": "Construction Supervisor"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "Passport",
+                "IssuingCountry": "TUR"
+            },
+            "AdditionalIdentification": {
+                "DocumentType": "Residence Visa"
+            },
+            "Address": {
+                "Country": "TUR"
+            }
+        },
+        "Beneficiary": {
+            "PartyIdentification": {
+                "Name": "HAMZA",
+                "PartyType": "INDIVIDUAL"
+            },
+            "PersonalDetails": {
+                "Nationality": "LBY"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "National ID",
+                "IssuingCountry": "LBY"
+            },
+            "Account": {
+                "AccountName": "HAMZA"
+            },
+            "Address": {
+                "Country": "LBY"
+            },
+            "Bank": {
+                "BIC": "LBYCAAFKAXXX"
+            }
+        },
+        "PaymentDetails": {
+            "PaymentPurpose": {
+                "CategoryCode": "PERS"
+				}
+},
+        "OperationalData": {
+            "ChannelInformation": {
+                "ChannelType": "MOBILE_BANKING"
+}
+},
+"HistoricalContext": {
+            "CustomerProfile": {
+                "GeographicFocus": "UAE_LBY"
+            }
+},
+        "ComplianceData": {
+            "RiskAssessment": {
+                "CustomerRiskRating": "Low"
+            }
+        }
+    }
+}
+
+ 

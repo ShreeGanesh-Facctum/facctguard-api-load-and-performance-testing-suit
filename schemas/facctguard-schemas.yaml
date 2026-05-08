@@ -1,0 +1,1147 @@
+# ============================================================
+# FacctGuard API - Schema Definitions
+# 
+# Required fields are based on minimal ip_files payload.
+# Optional fields are from the full transaction template.
+# ============================================================
+
+# ============================================================
+# REQUEST SCHEMA
+# ============================================================
+TransactionRequest:
+  type: object
+  required: [transactionPayment]
+  properties:
+    transactionPayment:
+      type: object
+      required:
+        - InterbankPaymentTransaction
+        - TenantDetails
+        - OrderingParty
+        - Beneficiary
+      properties:
+
+        # -------- INTERBANK PAYMENT TRANSACTION (required) --------
+        InterbankPaymentTransaction:
+          type: object
+          required: [TransactionHeader, TransactionIdentification, Amount]
+          properties:
+            TransactionHeader:
+              type: object
+              required: [TransctionType, TransactionSubType, ProcessingDate]
+              properties:
+                TransctionType:
+                  type: string
+                  description: Transaction type code
+                  example: "FX"
+                TransactionSubType:
+                  type: string
+                  example: "FOREX RETAIL"
+                ProcessingDate:
+                  type: string
+                  description: "Format: YYYY-MM-DD HH:MM:SS"
+                  example: "2026-04-21 14:30:25"
+                MessageType:
+                  type: string
+                  example: "CARD_AUTH_001"
+                MessageID:
+                  type: string
+                  example: "MSG20260421143025123456"
+                CreationDateTime:
+                  type: string
+                  format: date-time
+                  example: "2026-04-21T14:30:25.000Z"
+                BatchID:
+                  type: string
+                  example: "BTH20260421001"
+                SequenceNumber:
+                  type: string
+                  example: "1"
+                ValueDate:
+                  type: string
+                  example: "2026-04-21 14:30:25"
+                SettlementDate:
+                  type: string
+                  example: "2026-04-22"
+
+            TransactionIdentification:
+              type: object
+              required: [TransactionID]
+              properties:
+                TransactionID:
+                  type: string
+                  description: Unique transaction identifier
+                  example: "TXN20260421143025123456"
+                EndToEndID:
+                  type: string
+                  example: "E2E20260421ABCD1234"
+                InstructionID:
+                  type: string
+                  example: "INSTR20260421112234"
+                UETR:
+                  type: string
+                  format: uuid
+                  example: "550e8400-e29b-41d4-a716-446655440000"
+                RelatedReference:
+                  type: string
+                  example: "REL20260421998877"
+                AcquirerReferenceNumber:
+                  type: string
+                  example: "ARN74537123456789012345"
+                MerchantTransactionID:
+                  type: string
+                  example: "MERCH_TXN_ABC123"
+
+            BeneficiaryDetails:
+              type: object
+              required: [BeneficiaryAccountNumber, BeneficiaryCustomerID]
+              properties:
+                BeneficiaryAccountNumber:
+                  type: string
+                  example: "LBY98986103"
+                BeneficiaryIBAN:
+                  type: string
+                  example: "CH9300762011623852957"
+                BeneficiaryCustomerID:
+                  type: string
+                  example: "BENF1234009"
+
+            OrderingPartyDetails:
+              type: object
+              required: [OrderingPartyAccountNumber, OrderingPartyCustomerID]
+              properties:
+                OrderingPartyAccountNumber:
+                  type: string
+                  example: "AE0703312353"
+                OrderingPartyIBAN:
+                  type: string
+                  example: "US12BANK0123456789012345"
+                OrderingPartyCustomerID:
+                  type: string
+                  example: "CUST12340001"
+
+            Amount:
+              type: object
+              required: [InstructedAmount]
+              properties:
+                InstructedAmount:
+                  type: object
+                  required: ["@Currency", cdata]
+                  properties:
+                    "@Currency":
+                      type: string
+                      description: ISO 4217 currency code
+                      example: "AED"
+                    cdata:
+                      type: string
+                      description: Transaction amount
+                      example: "50000.00"
+                EquivalentAmount:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                      example: "USD"
+                    cdata:
+                      type: string
+                      example: "125.50"
+                ExchangeRate:
+                  type: string
+                  example: "1.0"
+                ChargeBearer:
+                  type: string
+                  example: "SLEV"
+                CashbackAmount:
+                  type: string
+                  example: "0.00"
+
+        # -------- TENANT DETAILS (required) --------
+        TenantDetails:
+          type: object
+          required: [tenant_id]
+          properties:
+            tenant_id:
+              type: string
+              description: Tenant identifier (case-sensitive)
+              example: "luluexchange"
+
+        # -------- ORDERING PARTY (required) --------
+        OrderingParty:
+          type: object
+          required: [PartyIdentification]
+          properties:
+            PartyIdentification:
+              type: object
+              required: [Name, PartyType]
+              properties:
+                Name:
+                  type: string
+                  example: "SALMAN KHAN"
+                PartyType:
+                  type: string
+                  enum: [Individual, Corporate, INDIVIDUAL, CORPORATE]
+                  example: "Individual"
+                CustomerID:
+                  type: string
+                  example: "CUST789012345"
+                LegalEntityID:
+                  type: string
+                  example: "LEI549300ABCDEF123456"
+                Email:
+                  type: string
+                  format: email
+                PhoneNumber:
+                  type: string
+                AccountCreationDate:
+                  type: string
+                  format: date
+                AccountLastModified:
+                  type: string
+                  format: date-time
+            PersonalDetails:
+              type: object
+              properties:
+                Nationality:
+                  type: string
+                  description: ISO 3166-1 alpha-3
+                  example: "AFG"
+                ResidenceCountry:
+                  type: string
+                  example: "ARE"
+                Occupation:
+                  type: string
+                  example: "Construction Supervisor"
+            IdentificationDocuments:
+              type: object
+              properties:
+                DocumentType:
+                  type: string
+                  example: "Passport"
+                IssuingCountry:
+                  type: string
+                  example: "AFG"
+            AdditionalIdentification:
+              type: object
+              properties:
+                DocumentType:
+                  type: string
+                  example: "Residence Visa"
+            Address:
+              type: object
+              properties:
+                AddressType:
+                  type: string
+                  example: "BUSINESS"
+                AddressLine1:
+                  type: string
+                AddressLine2:
+                  type: string
+                City:
+                  type: string
+                State:
+                  type: string
+                PostalCode:
+                  type: string
+                Country:
+                  type: string
+                  description: ISO 3166-1 alpha-3
+                  example: "AFG"
+            ContactDetails:
+              type: object
+              properties:
+                PhoneNumber:
+                  type: string
+                EmailAddress:
+                  type: string
+                  format: email
+            Account:
+              type: object
+              properties:
+                AccountNumber:
+                  type: string
+                IBAN:
+                  type: string
+                AccountType:
+                  type: string
+                  example: "CURRENT"
+                AccountName:
+                  type: string
+                CurrencyCode:
+                  type: string
+                  example: "USD"
+            Bank:
+              type: object
+              properties:
+                BIC:
+                  type: string
+                  example: "CHASUS33XXX"
+                BankName:
+                  type: string
+                BranchCode:
+                  type: string
+                ClearingCode:
+                  type: string
+
+        # -------- BENEFICIARY (required) --------
+        Beneficiary:
+          type: object
+          required: [PartyIdentification]
+          properties:
+            PartyIdentification:
+              type: object
+              required: [Name, PartyType]
+              properties:
+                Name:
+                  type: string
+                  example: "RASHID KHAN"
+                PartyType:
+                  type: string
+                  enum: [Individual, Corporate, INDIVIDUAL, CORPORATE]
+                  example: "INDIVIDUAL"
+                CustomerID:
+                  type: string
+                LegalEntityID:
+                  type: string
+            PersonalDetails:
+              type: object
+              properties:
+                Nationality:
+                  type: string
+                  example: "LBY"
+            IdentificationDocuments:
+              type: object
+              properties:
+                DocumentType:
+                  type: string
+                  example: "National ID"
+                IssuingCountry:
+                  type: string
+                  example: "LBY"
+            Account:
+              type: object
+              properties:
+                AccountNumber:
+                  type: string
+                IBAN:
+                  type: string
+                AccountType:
+                  type: string
+                AccountName:
+                  type: string
+                  example: "RASHID KHAN"
+                CurrencyCode:
+                  type: string
+            Address:
+              type: object
+              properties:
+                AddressType:
+                  type: string
+                AddressLine1:
+                  type: string
+                AddressLine2:
+                  type: string
+                City:
+                  type: string
+                State:
+                  type: string
+                PostalCode:
+                  type: string
+                Country:
+                  type: string
+                  example: "LBY"
+            ContactDetails:
+              type: object
+              properties:
+                PhoneNumber:
+                  type: string
+                EmailAddress:
+                  type: string
+            Bank:
+              type: object
+              properties:
+                BIC:
+                  type: string
+                  example: "LBYCAAFKAXXX"
+                BankName:
+                  type: string
+                BranchCode:
+                  type: string
+                ClearingCode:
+                  type: string
+            Relationship:
+              type: object
+              properties:
+                RelationshipType:
+                  type: string
+                RelationshipDescription:
+                  type: string
+
+        # -------- PAYMENT DETAILS (optional) --------
+        PaymentDetails:
+          type: object
+          properties:
+            PaymentPurpose:
+              type: object
+              properties:
+                CategoryCode:
+                  type: string
+                  enum: [PERS, BUSI]
+                  example: "PERS"
+                PurposeDescription:
+                  type: string
+                IndustryCode:
+                  type: string
+                BusinessCode:
+                  type: string
+            RemittanceInformation:
+              type: object
+              properties:
+                Structured:
+                  type: object
+                  properties:
+                    InvoiceNumber:
+                      type: string
+                    ContractNumber:
+                      type: string
+                    ShipmentReference:
+                      type: string
+                Unstructured:
+                  type: string
+            RegulatoryReporting:
+              type: object
+              properties:
+                ReportingCode:
+                  type: string
+                ReportingJurisdiction:
+                  type: string
+                StatisticalCode:
+                  type: string
+                AdditionalInfo:
+                  type: string
+
+        # -------- OPERATIONAL DATA (optional) --------
+        OperationalData:
+          type: object
+          properties:
+            ChannelInformation:
+              type: object
+              properties:
+                ChannelType:
+                  type: string
+                  example: "MOBILE_BANKING"
+                ChannelID:
+                  type: string
+                BusinessUnit:
+                  type: string
+                ProcessingBranch:
+                  type: string
+                RelationshipManager:
+                  type: string
+            FeeInformation:
+              type: object
+              properties:
+                OrderingPartyCharges:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                BeneficiaryCharges:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                CorrespondentCharges:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                TotalCharges:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                ChargeAllocation:
+                  type: string
+            AdditionalReferences:
+              type: object
+              properties:
+                InternalReference:
+                  type: string
+                CustomerReference:
+                  type: string
+                RegulatoryReference:
+                  type: string
+                AuditTrailID:
+                  type: string
+
+        # -------- HISTORICAL CONTEXT (optional) --------
+        HistoricalContext:
+          type: object
+          properties:
+            OrderingPartyCustomerID:
+              type: string
+            CustomerProfile:
+              type: object
+              properties:
+                GeographicFocus:
+                  type: string
+                  example: "UAE_LBY"
+                RelationshipStartDate:
+                  type: string
+                  format: date
+                AverageMonthlyVolume:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                TransactionFrequency:
+                  type: string
+                TypicalTransactionSize:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                PrimaryBusinessType:
+                  type: string
+                TotalTransactionCount:
+                  type: string
+                TotalTransactionAmount:
+                  type: string
+                AverageTransactionAmount:
+                  type: string
+                LargestTransactionAmount:
+                  type: string
+                LastTransactionDate:
+                  type: string
+                LastTransactionAmount:
+                  type: string
+            RecentTransactions:
+              type: object
+              properties:
+                Transaction30Days:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                TransactionCount30Days:
+                  type: string
+                LargestTransaction30Days:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+            AlertHistory:
+              type: object
+              properties:
+                LastAlert:
+                  type: string
+                  format: date
+                AlertFrequency12Months:
+                  type: string
+                SARFilings12Months:
+                  type: string
+                ComplianceStatus:
+                  type: string
+
+        # -------- COMPLIANCE DATA (optional) --------
+        ComplianceData:
+          type: object
+          properties:
+            SanctionsScreening:
+              type: object
+              properties:
+                ScreeningTimestamp:
+                  type: string
+                  format: date-time
+                ScreeningResult:
+                  type: string
+                ScreeningScore:
+                  type: string
+                ListsChecked:
+                  type: array
+                  items:
+                    type: string
+                MatchResults:
+                  type: object
+                  properties:
+                    NameMatch:
+                      type: string
+                    AddressMatch:
+                      type: string
+                    AccountMatch:
+                      type: string
+            PEPScreening:
+              type: object
+              properties:
+                OrderingPartyPEP:
+                  type: string
+                BeneficiaryPEP:
+                  type: string
+                UBOScreened:
+                  type: string
+                PEPScore:
+                  type: string
+            RiskAssessment:
+              type: object
+              properties:
+                CustomerRiskRating:
+                  type: string
+                  enum: [LOW, MEDIUM, HIGH, Low, Medium, High]
+                  example: "MEDIUM"
+                CountryRiskRating:
+                  type: string
+                TransactionRiskScore:
+                  type: string
+                ProductRiskRating:
+                  type: string
+
+        # -------- CARD TRANSACTION DETAILS (optional, full payload only) --------
+        CardTransactionDetails:
+          type: object
+          description: Card-specific data. Only present for card transactions.
+          properties:
+            CardDetails:
+              type: object
+              properties:
+                PrimaryAccountNumber:
+                  type: string
+                TokenizedPAN:
+                  type: string
+                CardBIN:
+                  type: string
+                Last4Digits:
+                  type: string
+                ExpiryDate:
+                  type: string
+                CardBrand:
+                  type: string
+                  enum: [VISA, MASTERCARD, AMEX]
+                CardType:
+                  type: string
+                  enum: [CREDIT, DEBIT, PREPAID]
+                CardProductType:
+                  type: string
+                IssuingCountry:
+                  type: string
+                CardholderName:
+                  type: string
+            VerificationResults:
+              type: object
+              properties:
+                CVV2Result:
+                  type: string
+                AVSResult:
+                  type: string
+                CardholderAuthentication:
+                  type: object
+                  properties:
+                    AuthenticationMethod:
+                      type: string
+                    AuthenticationResult:
+                      type: string
+                    ECI:
+                      type: string
+                    ThreeDSVersion:
+                      type: string
+            MerchantDetails:
+              type: object
+              properties:
+                MerchantID:
+                  type: string
+                MerchantName:
+                  type: string
+                MerchantCategoryCode:
+                  type: string
+                MerchantCountry:
+                  type: string
+                MerchantCity:
+                  type: string
+                AcquirerID:
+                  type: string
+                AcquirerName:
+                  type: string
+                TerminalID:
+                  type: string
+            PointOfSaleData:
+              type: object
+              properties:
+                EntryMode:
+                  type: string
+                CardPresent:
+                  type: boolean
+                CardholderPresent:
+                  type: boolean
+                PINEntered:
+                  type: boolean
+                TerminalCapability:
+                  type: string
+            AuthorizationData:
+              type: object
+              properties:
+                AuthorizationCode:
+                  type: string
+                IssuerResponseCode:
+                  type: string
+                IssuerResponseMessage:
+                  type: string
+                IssuerBIC:
+                  type: string
+                IssuerName:
+                  type: string
+                ApprovedAmount:
+                  type: string
+            DeviceNetworkData:
+              type: object
+              properties:
+                DeviceID:
+                  type: string
+                DeviceType:
+                  type: string
+                IPAddress:
+                  type: string
+                IPCountry:
+                  type: string
+                IPCity:
+                  type: string
+                ProxyDetected:
+                  type: boolean
+                VPNDetected:
+                  type: boolean
+                TorDetected:
+                  type: boolean
+                SessionID:
+                  type: string
+            SessionLoginData:
+              type: object
+              properties:
+                LoginTimestamp:
+                  type: string
+                  format: date-time
+                LoginMethod:
+                  type: string
+                MFAUsed:
+                  type: boolean
+                MFAMethod:
+                  type: string
+                LoginAttempts:
+                  type: string
+                FailedLoginAttempts24Hours:
+                  type: string
+            VelocityMetrics:
+              type: object
+              properties:
+                TransactionCount1Hour:
+                  type: string
+                TransactionCount24Hours:
+                  type: string
+                TransactionCount7Days:
+                  type: string
+                TransactionCount30Days:
+                  type: string
+                TransactionAmountLast1Hour:
+                  type: string
+                TransactionAmountLast24Hours:
+                  type: string
+                GeoVelocityKmPerHour:
+                  type: string
+            NetworkRiskData:
+              type: object
+              properties:
+                VisaNetRiskScore:
+                  type: string
+                NetworkRecommendation:
+                  type: string
+                RiskFactors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      FactorType:
+                        type: string
+                      FactorScore:
+                        type: string
+                      FactorDescription:
+                        type: string
+            ChargebackDisputeData:
+              type: object
+              properties:
+                ChargebackCount12Months:
+                  type: string
+                ChargebackAmount12Months:
+                  type: string
+                DisputeCount12Months:
+                  type: string
+                LastChargebackDate:
+                  type: string
+                  format: date
+            FraudIndicators:
+              type: object
+              properties:
+                FraudTypeCode:
+                  type: string
+                FraudTypeName:
+                  type: string
+                HighRiskShippingAddress:
+                  type: boolean
+                KnownFraudAddress:
+                  type: boolean
+            OrderDetails:
+              type: object
+              properties:
+                OrderID:
+                  type: string
+                OrderTimestamp:
+                  type: string
+                  format: date-time
+                OrderItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      ItemID:
+                        type: string
+                      ItemName:
+                        type: string
+                      ItemCategory:
+                        type: string
+                      ItemQuantity:
+                        type: string
+                      ItemUnitPrice:
+                        type: string
+                      ItemTotalPrice:
+                        type: string
+                DigitalGoods:
+                  type: boolean
+
+        # -------- INTERBANK PAYMENT DETAILS (optional) --------
+        InterbankPaymentDetails:
+          type: object
+          properties:
+            BeneficiaryDetails:
+              type: object
+              properties:
+                BeneficiaryAccountNumber:
+                  type: string
+                BeneficiaryIBAN:
+                  type: string
+                BeneficiaryCustomerID:
+                  type: string
+            OrderingPartyDetails:
+              type: object
+              properties:
+                OrderingPartyAccountNumber:
+                  type: string
+                OrderingPartyIBAN:
+                  type: string
+                OrderingPartyCustomerID:
+                  type: string
+
+        # -------- SHIPPING DETAILS (optional) --------
+        ShippingDetails:
+          type: object
+          properties:
+            ShippingAddress:
+              type: object
+              properties:
+                AddressLine1:
+                  type: string
+                AddressLine2:
+                  type: string
+                City:
+                  type: string
+                State:
+                  type: string
+                PostalCode:
+                  type: string
+                Country:
+                  type: string
+                AddressType:
+                  type: string
+            ShippingMethod:
+              type: string
+            ShippingCarrier:
+              type: string
+            TrackingNumber:
+              type: string
+            EstimatedDeliveryDate:
+              type: string
+              format: date
+            RecipientName:
+              type: string
+            AddressMatchesBilling:
+              type: boolean
+
+        # -------- PAYMENT CHAIN (optional) --------
+        PaymentChain:
+          type: object
+          properties:
+            TransactionID:
+              type: string
+            OrderingInstitution:
+              $ref: '#/PaymentChainInstitution'
+            Intermediary1:
+              $ref: '#/PaymentChainInstitution'
+            BeneficiaryInstitution:
+              $ref: '#/PaymentChainInstitution'
+
+        # -------- EDD DATA (optional) --------
+        EDDData:
+          type: object
+          properties:
+            TransactionID:
+              type: string
+            OrderingPartyEDD:
+              type: object
+              properties:
+                LastEDDDate:
+                  type: string
+                  format: date
+                EDDStatus:
+                  type: string
+                DocumentationLevel:
+                  type: string
+                SourceOfWealth:
+                  type: string
+                BusinessPurpose:
+                  type: string
+            BeneficiaryEDD:
+              type: object
+              properties:
+                KYCStatus:
+                  type: string
+                LastKYCUpdate:
+                  type: string
+                  format: date
+                RelationshipLength:
+                  type: string
+                TransactionHistory:
+                  type: string
+            TransactionEDD:
+              type: object
+              properties:
+                ExpectedAmount:
+                  type: object
+                  properties:
+                    "@Currency":
+                      type: string
+                    Value:
+                      type: string
+                FrequencyExpected:
+                  type: string
+                BusinessJustification:
+                  type: string
+                SupportingDocuments:
+                  type: array
+                  items:
+                    type: string
+
+        # -------- PROCESSING INFORMATION (optional) --------
+        ProcessingInformation:
+          type: object
+          properties:
+            TransactionID:
+              type: string
+            SystemData:
+              type: object
+              properties:
+                SourceSystem:
+                  type: string
+                ProcessingSystem:
+                  type: string
+                InterfaceVersion:
+                  type: string
+                MessageFormat:
+                  type: string
+                ProcessingNode:
+                  type: string
+            TimingData:
+              type: object
+              properties:
+                ReceivedTimestamp:
+                  type: string
+                  format: date-time
+                ValidationTimestamp:
+                  type: string
+                  format: date-time
+                ComplianceScreeningTime:
+                  type: string
+                  format: date-time
+                AuthorizationTimestamp:
+                  type: string
+                  format: date-time
+                ExecutionTimestamp:
+                  type: string
+                  format: date-time
+            ValidationResults:
+              type: object
+              properties:
+                FormatValidation:
+                  type: string
+                BusinessValidation:
+                  type: string
+                RegulatoryValidation:
+                  type: string
+                AuthorizationResult:
+                  type: string
+                ComplianceCleared:
+                  type: string
+
+        # -------- FEED METADATA (optional) --------
+        FeedMetadata:
+          type: object
+          properties:
+            TransactionID:
+              type: string
+            FeedHeader:
+              type: object
+              properties:
+                FeedID:
+                  type: string
+                FeedVersion:
+                  type: string
+                GenerationTimestamp:
+                  type: string
+                  format: date-time
+                SourceSystemID:
+                  type: string
+                DestinationSystemID:
+                  type: string
+                RecordSequence:
+                  type: string
+                BatchSize:
+                  type: string
+            DataQuality:
+              type: object
+              properties:
+                CompletenessScore:
+                  type: string
+                AccuracyScore:
+                  type: string
+                TimelinessScore:
+                  type: string
+                MandatoryFieldsComplete:
+                  type: string
+                DataValidationPassed:
+                  type: string
+            ProcessingInstructions:
+              type: object
+              properties:
+                Priority:
+                  type: string
+                RetentionPeriod:
+                  type: string
+                ArchiveRequired:
+                  type: string
+                RealTimeProcessing:
+                  type: string
+                SpecialHandling:
+                  type: string
+
+# ============================================================
+# REUSABLE SUB-SCHEMAS
+# ============================================================
+
+PaymentChainInstitution:
+  type: object
+  properties:
+    BIC:
+      type: string
+    Name:
+      type: string
+    Role:
+      type: string
+    MessageType:
+      type: string
+    ProcessingTime:
+      type: string
+      format: date-time
+    ChargesAmount:
+      type: object
+      properties:
+        "@Currency":
+          type: string
+        Value:
+          type: string
+    FinalSettlementTime:
+      type: string
+      format: date-time
+
+# ============================================================
+# RESPONSE SCHEMAS
+# ============================================================
+
+SuccessResponse:
+  type: object
+  properties:
+    transaction_id:
+      type: string
+      description: Echo of the input transaction ID
+      example: "TXN20260305561207"
+    tenant_id:
+      type: string
+      description: Tenant that processed the transaction
+      example: "facctum"
+    message:
+      type: string
+      description: Human-readable result summary
+      example: "There are 1 alerts raised against this transaction"
+    status:
+      type: string
+      description: Red = alerts raised, Green = no alerts
+      enum: [Red, Green]
+      example: "Red"
+    alert_details:
+      type: array
+      description: List of alerts (empty array if status is Green)
+      items:
+        $ref: '#/AlertDetail'
+
+AlertDetail:
+  type: object
+  properties:
+    alert_id:
+      type: string
+      description: Unique alert identifier
+      example: "ALT-20260421080327-740233"
+    alert_risk_score:
+      type: number
+      format: float
+      description: Risk score between 0.0 and 1.0
+      example: 0.52
+    alert_environment:
+      type: string
+      description: Execution environment
+      enum: [PARALLEL, PRODUCTION]
+      example: "PARALLEL"
+
+ErrorResponse:
+  type: object
+  properties:
+    component:
+      type: string
+      description: Ab Initio component that raised the error
+      example: "Rule_Execution.Extract_JSON_Message.000"
+    message:
+      type: string
+      description: Summary error message
+      example: "Execution failed with error. Please check the detailed_error column for the exact error"
+    detailed_error:
+      type: string
+      description: Detailed error with specifics
+      example: "Line 1: Unexpected token. Missing a quote?"

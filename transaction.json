@@ -1,0 +1,646 @@
+{
+    "transactionPayment": {
+        "InterbankPaymentTransaction": {
+            "TransactionHeader": {
+                "TransctionType": "CARD",
+                "TransactionSubType": "CARD",
+                "MessageType": "CARD_AUTH_001",
+                "MessageID": "MSG20240915002234502",
+                "CreationDateTime": "2026-03-04T15:10:05.123Z",
+                "BatchID": "BTH20240915002",
+                "SequenceNumber": "2",
+                "ProcessingDate": "2026-03-04 15:10:05",
+                "ValueDate": "2026-03-04",
+                "SettlementDate": "2024-09-16"
+            },
+            "TransactionIdentification": {
+                "EndToEndID": "E2E20240915WXYZ2002",
+                "TransactionID": "TXN20240304123982",
+                "InstructionID": "INSTR20240915212202",
+                "UETR": "660e8400-e29b-41d4-a716-446655550002",
+                "RelatedReference": "REL20240914888802"
+            },
+            "BeneficiaryDetails": {
+                "BeneficiaryAccountNumber": "CH9300762011623852957",
+                "BeneficiaryIBAN": "CH9300762011623852957",
+                "BeneficiaryCustomerID": "BENEF797123601"
+            },
+            "OrderingPartyDetails": {
+                "OrderingPartyAccountNumber": "5200000000000002",
+                "OrderingPartyIBAN": "US12BANK0123456789012345",
+                "OrderingPartyCustomerID": "CUST1734352396"
+            },
+            "Amount": {
+                "InstructedAmount": {
+                    "@Currency": "AED",
+                    "cdata": "0.50"
+                },
+                "EquivalentAmount": {
+                    "@Currency": "AED",
+                    "cdata": "0.50"
+                },
+                "ExchangeRate": "1.0",
+                "ChargeBearer": "SLEV"
+            }
+        },
+        "OrderingParty": {
+            "PartyIdentification": {
+                "Name": "Hassan SULTANI",
+                "CustomerID": "CUST1734352396",
+                "LegalEntityID": "NA",
+                "PartyType": "INDIVIDUAL"
+            },
+            "PersonalDetails": {
+                "DateOfBirth": "1982-05-18",
+                "PlaceOfBirth": "Herat",
+                "Nationality": "AFG",
+                "ResidenceCountry": "ARE",
+                "Occupation": "Construction Supervisor",
+                "EmployerName": "Gulf Construction Company LLC"
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "Passport",
+                "DocumentNumber": "G1234567",
+                "IssuingCountry": "AFG",
+                "IssueDate": "2023-02-15",
+                "ExpiryDate": "2028-02-14"
+            },
+            "Address": {
+                "AddressType": "RESIDENTIAL",
+                "AddressLine1": "Al Nahda Area",
+                "AddressLine2": "Building 23, Apartment 405",
+                "City": "Dubai",
+                "State": "Dubai",
+                "PostalCode": "00000",
+                "Country": "ARE"
+            },
+            "ContactDetails": {
+                "PhoneNumber": "+971-50-234-5678",
+                "EmailAddress": "ahmad.sultani@email.ARE"
+            },
+            "Account": {
+                "AccountNumber": "5200000000000002",
+                "IBAN": "US12BANK0123456789012345",
+                "AccountType": "CURRENT",
+                "AccountName": "Hassan SULTANI",
+                "CurrencyCode": "AED"
+            },
+            "Bank": {
+                "BIC": "CHASUS33XXX",
+                "BankName": "CHASE BANK NA",
+                "BranchCode": "001",
+                "ClearingCode": "021000021"
+            }
+        },
+        "Beneficiary": {
+            "PartyIdentification": {
+                "Name": "TECH GADGETS ONLINE",
+                "CustomerID": "MID123742341",
+                "LegalEntityID": "NA",
+                "PartyType": "INDIVIDUAL"
+            },
+            "PersonalDetails": {
+                "DateOfBirth": "1985-11-22",
+                "PlaceOfBirth": "Herat",
+                "Nationality": "AFG",
+                "ResidenceCountry": "",
+                "Occupation": "Teacher",
+                "EmployerName": ""
+            },
+            "IdentificationDocuments": {
+                "DocumentType": "NATIONAL_ID",
+                "DocumentNumber": "AFG123456789",
+                "IssuingCountry": "AFG",
+                "IssueDate": "",
+                "ExpiryDate": "2027-06-30"
+            },
+            "Address": {
+                "AddressType": "REGISTERED",
+                "AddressLine1": "456 Commerce Avenue",
+                "AddressLine2": "Floor 12",
+                "City": "Geneva",
+                "State": "GE",
+                "PostalCode": "1201",
+                "Country": "CH"
+            },
+            "ContactDetails": {
+                "PhoneNumber": "+41-22-555-0987",
+                "EmailAddress": "finance@globaltrading.ch"
+            },
+            "Relationship": {
+                "RelationshipType": "BUSINESS",
+                "RelationshipDescription": "Merchant"
+            },
+            "Account": {
+                "AccountNumber": "CH9300762011623852957",
+                "IBAN": "CH9300762011623852957",
+                "AccountType": "CURRENT",
+                "AccountName": "GLOBAL TRADING ENTERPRISES SA",
+                "CurrencyCode": "EUR"
+            },
+            "Bank": {
+                "BIC": "UBSWCHZH80A",
+                "BankName": "UBS SWITZERLAND AG",
+                "BranchCode": "80A",
+                "ClearingCode": "273"
+            }
+        },
+        "PaymentChain": {
+            "TransactionID": "TXN20240304123982",
+            "OrderingInstitution": {
+                "BIC": "CHASUS33XXX",
+                "Name": "JPMORGAN CHASE BANK NA",
+                "Role": "ORDERING_INSTITUTION",
+                "MessageType": "MT103",
+                "ProcessingTime": "2026-03-04T14:30:05Z"
+            },
+            "Intermediary1": {
+                "BIC": "DEUTDEFFXXX",
+                "Name": "DEUTSCHE BANK AG",
+                "Role": "INTERMEDIARY",
+                "MessageType": "MT202COV",
+                "ProcessingTime": "2026-03-04T14:45:05Z",
+                "ChargesAmount": {
+                    "@Currency": "AED",
+                    "cdata": "0.00"
+                },
+                "NostroCoverAccount": "400886100001"
+            },
+            "Intermediary2": {
+                "BIC": "",
+                "Name": "",
+                "Role": "",
+                "MessageType": "",
+                "ProcessingTime": "",
+                "ChargesAmount": {
+                    "@Currency": "",
+                    "cdata": ""
+                },
+                "NostroCoverAccount": ""
+            },
+            "BeneficiaryInstitution": {
+                "BIC": "UBSWCHZH80A",
+                "Name": "UBS SWITZERLAND AG",
+                "Role": "BENEFICIARY_INSTITUTION",
+                "MessageType": "MT103",
+                "ProcessingTime": "2026-03-04T15:02:05Z",
+                "FinalSettlementTime": ""
+            }
+        },
+        "PaymentDetails": {
+            "TransactionID": "TXN20240304123982",
+            "PaymentPurpose": {
+                "CategoryCode": "OTHR",
+                "PurposeDescription": "Card Transaction",
+                "IndustryCode": "5732",
+                "BusinessCode": "ECOMMERCE"
+            },
+            "RemittanceInformation": {
+                "Structured": {
+                    "ReferenceNumber": "ORD20240915ABC102"
+                },
+                "Unstructured": "Card enumeration test transaction attempt 2"
+            },
+            "RegulatoryReporting": {
+                "ReportingCode": "CARD_PAYMENT",
+                "ReportingJurisdiction": "US",
+                "StatisticalCode": "001",
+                "AdditionalInfo": "Low value card testing attempt"
+            },
+            "SourceOfFunds": {
+                "FundSource": "CARD_CREDIT_LINE",
+                "EmploymentVerified": "TRUE",
+                "SalaryTransferAccount": "FALSE"
+            }
+        },
+        "ComplianceData": {
+            "SanctionsScreening": {
+                "ScreeningTimestamp": "2026-03-04T14:29:60Z",
+                "ScreeningResult": "CLEARED",
+                "ScreeningScore": "0.08",
+                "ListsChecked": {
+                    "List": [
+                        "OFAC_SDN",
+                        "UN_CONSOLIDATED",
+                        "EU_CONSOLIDATED",
+                        "HMT_SANCTIONS"
+                    ]
+                },
+                "MatchResults": {
+                    "NameMatch": "FALSE",
+                    "AddressMatch": "FALSE",
+                    "AccountMatch": "FALSE",
+                    "CountryMatch": "FALSE"
+                },
+                "CountryRiskFlag": "MEDIUM"
+            },
+            "PEPScreening": {
+                "OrderingPartyPEP": "FALSE",
+                "BeneficiaryPEP": "FALSE",
+                "FamilyMemberPEP": "FALSE",
+                "UBOScreened": "TRUE",
+                "PEPScore": "0.02"
+            },
+            "RiskAssessment": {
+                "CustomerRiskRating": "MEDIUM",
+                "CountryRiskRating": "MEDIUM",
+                "TransactionRiskScore": "0.8",
+                "ProductRiskRating": "HIGH",
+                "OverallRiskRating": "HIGH"
+            },
+            "AdditionalScreening": {
+                "AdverseMediaCheck": "CLEARED",
+                "WatchlistScreening": "CLEARED",
+                "InternalBlacklistCheck": "CLEARED"
+            }
+        },
+        "EDDData": {
+            "TransactionID": "TXN20240304123982",
+            "OrderingPartyEDD": {
+                "LastEDDDate": "2024-08-15",
+                "EDDStatus": "CURRENT",
+                "DocumentationLevel": "STANDARD",
+                "SourceOfWealth": "EMPLOYMENT",
+                "SourceOfFunds": "SALARY",
+                "EmploymentVerification": "VERIFIED",
+                "VisaStatus": "WORK_PERMIT"
+            },
+            "BeneficiaryEDD": {
+                "KYCStatus": "STANDARD",
+                "LastKYCUpdate": "2024-07-20",
+                "RelationshipLength": "NEW",
+                "TransactionHistory": "INCONSISTENT",
+                "RelationshipVerification": "PENDING"
+            },
+            "TransactionEDD": {
+                "ExpectedAmount": {
+                    "@Currency": "AED",
+                    "cdata": "100.00"
+                },
+                "FrequencyExpected": "OCCASIONAL",
+                "BusinessJustification": "Online purchase",
+                "SupportingDocuments": {
+                    "DocumentType": [
+                        "NONE"
+                    ]
+                },
+                "PurposeVerification": "SUSPICIOUS"
+            },
+            "HighRiskFactors": {
+                "DestinationCountryRisk": "MEDIUM",
+                "FATFGreyList": "FALSE",
+                "SanctionedCountry": "FALSE",
+                "LimitedBankingInfrastructure": "FALSE",
+                "TerrorismFinancingRisk": "LOW"
+            }
+        },
+        "ProcessingInformation": {
+            "TransactionID": "TXN20240304123982",
+            "SystemData": {
+                "SourceSystem": "CARD_GATEWAY",
+                "ProcessingSystem": "FRAUD_DETECTION_V3",
+                "InterfaceVersion": "ISO8583_1993",
+                "MessageFormat": "0100_AUTH_REQUEST",
+                "ProcessingNode": "LAX_GATEWAY_01"
+            },
+            "TimingData": {
+                "ReceivedTimestamp": "2026-03-04T14:30:05.500Z",
+                "ValidationTimestamp": "2026-03-04T14:30:05.750Z",
+                "ComplianceScreeningTime": "2026-03-04T14:30:05.900Z",
+                "ManualReviewTime": "",
+                "AuthorizationTimestamp": "2026-03-04T14:30:06.000Z",
+                "ExecutionTimestamp": "2026-03-04T14:30:06.123Z",
+                "TMSFeedTimestamp": "2026-03-04T14:30:06.500Z"
+            },
+            "ValidationResults": {
+                "FormatValidation": "PASSED",
+                "BusinessValidation": "FAILED",
+                "RegulatoryValidation": "PASSED",
+                "AuthorizationResult": "DECLINED",
+                "ComplianceCleared": "TRUE",
+                "ManualReviewRequired": "TRUE",
+                "ReviewReason": "CVV_MISMATCH_PATTERN"
+            }
+        },
+        "OperationalData": {
+            "TransactionID": "TXN20240304123982",
+            "ChannelInformation": {
+                "ChannelType": "ECOMMERCE",
+                "ChannelID": "ECOM_GATEWAY_01",
+                "BusinessUnit": "CARD_PROCESSING",
+                "ProcessingBranch": "CA_MAIN",
+                "RelationshipManager": "",
+                "InitiationMethod": "ONLINE"
+            },
+            "FeeInformation": {
+                "OrderingPartyCharges": {
+                    "@Currency": "AED",
+                    "cdata": "0.00"
+                },
+                "BeneficiaryCharges": {
+                    "@Currency": "AED",
+                    "cdata": "0.00"
+                },
+                "CorrespondentCharges": {
+                    "@Currency": "AED",
+                    "cdata": "0.00"
+                },
+                "TotalCharges": {
+                    "@Currency": "AED",
+                    "cdata": "0.00"
+                },
+                "ChargeAllocation": "OUR",
+                "FXMargin": {
+                    "@Currency": "AED",
+                    "cdata": "0.00"
+                }
+            },
+            "AdditionalReferences": {
+                "InternalReference": "INT_REF_20240915_002",
+                "CustomerReference": "CARD_TEST_002",
+                "RegulatoryReference": "",
+                "AuditTrailID": "AUDIT_TXN_20240915_002",
+                "ComplianceReference": "COMP_REF_002"
+            }
+        },
+        "HistoricalContext": {
+            "OrderingPartyCustomerID": "CUST6842375602",
+            "CustomerProfile": {
+                "RelationshipStartDate": "2026-03-04",
+                "AverageMonthlyVolume": {
+                    "@Currency": "AED",
+                    "cdata": "1.0"
+                },
+                "TransactionFrequency": "MULTIPLE",
+                "TypicalTransactionSize": {
+                    "@Currency": "AED",
+                    "cdata": "0.50"
+                },
+                "PrimaryBusinessType": "INDIVIDUAL_CONSUMER",
+                "GeographicFocus": "US",
+                "CustomerSegment": "RETAIL"
+            },
+            "RecentTransactions": {
+                "Transaction30Days": {
+                    "@Currency": "AED",
+                    "cdata": "1.0"
+                },
+                "TransactionCount30Days": "2",
+                "LargestTransaction30Days": {
+                    "@Currency": "AED",
+                    "cdata": "0.50"
+                },
+                "CountriesInvolved30Days": {
+                    "Country": [
+                        "US"
+                    ]
+                }
+            },
+            "Transaction90Days": {
+                "@Currency": "AED",
+                "cdata": "1.0"
+            },
+            "TransactionCount90Days": "2",
+            "AlertHistory": {
+                "LastAlert": "",
+                "AlertFrequency12Months": "0",
+                "AlertType": "",
+                "SARFilings12Months": "0",
+                "ComplianceStatus": "UNDER_REVIEW",
+                "ResolutionStatus": ""
+            }
+        },
+        "FeedMetadata": {
+            "TransactionID": "TXN20240304123982",
+            "FeedHeader": {
+                "FeedID": "UNIFIED_FEED_20240915",
+                "FeedVersion": "V3.0.0",
+                "GenerationTimestamp": "2026-03-04T14:30:07.000Z",
+                "SourceSystemID": "CARD_GATEWAY_PROD",
+                "DestinationSystemID": "TMS_NICE_ACTIMIZE",
+                "RecordSequence": "147802",
+                "BatchSize": "1"
+            },
+            "DataQuality": {
+                "CompletenessScore": "0.95",
+                "AccuracyScore": "1.00",
+                "TimelinessScore": "0.98",
+                "MandatoryFieldsComplete": "TRUE",
+                "DataValidationPassed": "TRUE"
+            },
+            "ProcessingInstructions": {
+                "Priority": "HIGH",
+                "RetentionPeriod": "7_YEARS",
+                "ArchiveRequired": "TRUE",
+                "RealTimeProcessing": "TRUE",
+                "SpecialHandling": "FRAUD_ALERT",
+                "ComplianceReviewRequired": "TRUE",
+                "EscalationLevel": "L2"
+            }
+        },
+        "cardTransactionDetails": {
+            "cardDetails": {
+                "primaryAccountNumber": "5200********0002",
+                "tokenizedPAN": "5895370012345602",
+                "paymentAccountReference": "M0010013020123456789012345678901234",
+                "cardBIN": "520000",
+                "last4Digits": "0002",
+                "expiryDate": "2026-11",
+                "cardBrand": "MASTERCARD",
+                "cardType": "CREDIT",
+                "cardProductType": "WORLD",
+                "issuingCountry": "US",
+                "cardholderName": "Hassan SULTANI"
+            },
+            "verificationResults": {
+                "cvv2Result": "N",
+                "cvv2Provided": true,
+                "avsResult": "N",
+                "avsAddressMatch": false,
+                "avsPostalCodeMatch": false,
+                "cardholderAuthentication": {
+                    "authenticationMethod": "3DS_V2",
+                    "authenticationResult": "FAILED",
+                    "eci": "07",
+                    "cavv": "",
+                    "xid": "",
+                    "threeDSVersion": "2.1.0",
+                    "authenticationTimestamp": "2026-03-04T15:10:05Z"
+                }
+            },
+            "merchantDetails": {
+                "merchantID": "MID123742341",
+                "merchantName": "TECH GADGETS ONLINE",
+                "merchantCategoryCode": "5732",
+                "merchantCountry": "US",
+                "merchantCity": "Los Angeles",
+                "merchantState": "CA",
+                "merchantPostalCode": "90001",
+                "merchantURL": "https://techgadgets.com",
+                "merchantDescriptor": "TECH GADGETS LA",
+                "acquirerID": "ACQ123456789",
+                "acquirerName": "WORLDPAY",
+                "terminalID": "TERM987654",
+                "storeID": "STORE002"
+            },
+            "pointOfSaleData": {
+                "entryMode": "MANUAL",
+                "cardPresent": false,
+                "cardholderPresent": false,
+                "pinEntered": false,
+                "recurringTransaction": false,
+                "installmentTransaction": false,
+                "posConditionCode": "59",
+                "terminalCapability": "ECOMMERCE"
+            },
+            "authorizationData": {
+                "authorizationCode": "",
+                "authorizationTimestamp": "2026-03-04T15:10:05Z",
+                "issuerResponseCode": "05",
+                "issuerResponseMessage": "DECLINED",
+                "issuerBIC": "CHASUS33XXX",
+                "issuerName": "CHASE BANK",
+                "issuerCountry": "US",
+                "declineReason": "CVV_MISMATCH",
+                "partialApproval": false,
+                "approvedAmount": "0.00"
+            },
+            "deviceNetworkData": {
+                "deviceID": "DEV_FP_XYZ789ABC123",
+                "deviceFingerprint": "z9y8x7w6v5u4t3s2r1q0",
+                "deviceType": "MOBILE",
+                "operatingSystem": "Android 13",
+                "browser": "Chrome Mobile 119.0",
+                "browserLanguage": "en-US",
+                "screenResolution": "1080x2400",
+                "userAgent": "Mozilla/5.0 (Linux; Android 13)...",
+                "ipAddress": "10.50.75.200",
+                "ipType": "IPV4",
+                "ipCountry": "US",
+                "ipRegion": "California",
+                "ipCity": "Los Angeles",
+                "ipPostalCode": "90001",
+                "ipLatitude": "34.0522",
+                "ipLongitude": "-118.2437",
+                "ipISP": "AT&T Wireless",
+                "proxyDetected": false,
+                "vpnDetected": false,
+                "torDetected": false,
+                "anonymousIPDetected": false,
+                "sessionID": "SESS_20240915_XYZ789",
+                "cookiesEnabled": true,
+                "javascriptEnabled": true
+            },
+            "velocityMetrics": {
+                "transactionCount1Hour": "2",
+                "transactionCount24Hours": "2",
+                "transactionCount7Days": "2",
+                "transactionCount30Days": "2",
+                "failedAuthorizationCount1Hour": "2",
+                "failedAuthorizationCount24Hours": "2",
+                "cvvMismatchCount1Hour": "2",
+                "cvvMismatchCount24Hours": "2",
+                "avsMismatchCount1Hour": "2",
+                "avsMismatchCount24Hours": "2",
+                "uniqueCardsToShippingAddress24Hours": "2",
+                "uniqueCardsFromIP1Hour": "2",
+                "uniqueCardsFromDevice1Hour": "2",
+                "transactionAmountLast1Hour": "1.00",
+                "transactionAmountLast24Hours": "1.00",
+                "geoVelocityKmPerHour": "0.0"
+            },
+            "fraudIndicators": {
+                "fraudTypeCode": "1",
+                "fraudTypeName": "CARD_TESTING",
+                "suspiciousActivityFlags": [
+                    "CVV_MISMATCH",
+                    "LOW_VALUE_TRANSACTION",
+                    "RAPID_ATTEMPTS"
+                ],
+                "highRiskShippingAddress": false,
+                "knownFraudAddress": false,
+                "multipleCardsToAddress": false,
+                "reshippingHubDetected": false
+            },
+            "sessionLoginData": {
+                "loginTimestamp": "2026-03-04T14:25:00Z",
+                "loginMethod": "PASSWORD",
+                "mfaUsed": false,
+                "mfaMethod": "",
+                "loginAttempts": "1",
+                "failedLoginAttempts24Hours": "0",
+                "passwordLastChanged": "2024-09-10",
+                "sessionDuration": "420",
+                "newDeviceLogin": false,
+                "newLocationLogin": false,
+                "suspiciousLoginBehavior": true
+            },
+            "networkRiskData": {
+                "visaNetRiskScore": "",
+                "mastercardDecisionIntelligenceScore": "0.75",
+                "networkRecommendation": "DECLINE",
+                "riskFactors": [
+                    {
+                        "factorType": "CVV_MISMATCH",
+                        "factorScore": "0.8",
+                        "factorDescription": "CVV verification failed"
+                    },
+                    {
+                        "factorType": "LOW_AMOUNT",
+                        "factorScore": "0.7000000000000001",
+                        "factorDescription": "Unusually low transaction amount"
+                    }
+                ]
+            },
+            "chargebackDisputeData": {
+                "chargebackCount6Months": "0",
+                "chargebackCount12Months": "0",
+                "chargebackAmount6Months": "0.00",
+                "chargebackAmount12Months": "0.00",
+                "disputeCount6Months": "0",
+                "disputeCount12Months": "0",
+                "lastChargebackDate": "",
+                "lastChargebackReasonCode": "",
+                "lastChargebackAmount": "0.00",
+                "chargebackHistory": []
+            },
+            "orderDetails": {
+                "orderID": "ORD20240915ABC102",
+                "orderTimestamp": "2026-03-04T14:28:05Z",
+                "orderItems": [
+                    {
+                        "itemID": "PROD12345",
+                        "itemName": "Test Product",
+                        "itemCategory": "ELECTRONICS",
+                        "itemQuantity": "1",
+                        "itemUnitPrice": "0.50",
+                        "itemTotalPrice": "0.50",
+                        "itemSKU": "SKU-TEST-002"
+                    }
+                ],
+                "digitalGoods": false,
+                "preOrder": false,
+                "giftPurchase": false,
+                "giftMessage": ""
+            },
+            "shippingDetails": {
+                "shippingAddress": {
+                    "addressLine1": "123 Test Street",
+                    "addressLine2": "Apt 2",
+                    "city": "Los Angeles",
+                    "state": "CA",
+                    "postalCode": "90001",
+                    "country": "US",
+                    "addressType": "RESIDENTIAL"
+                },
+                "shippingMethod": "STANDARD",
+                "shippingCarrier": "FedEx",
+                "trackingNumber": "",
+                "estimatedDeliveryDate": "2024-09-20",
+                "recipientName": "AHMAD HASSAN SULTANI",
+                "recipientPhone": "+971-50-234-5678",
+                "addressMatchesBilling": false
+            }
+        }
+    }
+}
