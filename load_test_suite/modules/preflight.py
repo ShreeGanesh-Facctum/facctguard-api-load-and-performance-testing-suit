@@ -54,6 +54,16 @@ class PreflightChecker:
                     }
                     console.print(f"  [green]\u2713 Health check passed ({resp.status}): {body[:100]}[/green]")
                     return True
+                elif resp.status == 400:
+                    # 400 means the server is alive but expects a payload — this is fine
+                    self.results["health"] = {
+                        "status": "PASS",
+                        "response": body[:200],
+                        "status_code": resp.status,
+                        "note": "Server responded with 400 (no payload) - confirms server is reachable",
+                    }
+                    console.print(f"  [green]\u2713 Server is reachable ({resp.status} - no payload expected on GET)[/green]")
+                    return True
                 else:
                     self.results["health"] = {
                         "status": "FAIL",

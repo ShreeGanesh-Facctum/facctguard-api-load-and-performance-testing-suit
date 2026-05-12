@@ -40,7 +40,7 @@ console = Console()
 DEFAULT_CONFIG = {
     "target_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/facctguard",
     "healthcheck_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/healthcheck",
-    "auth_url": "https://auth-qa-saas.facctum.com/oauth/token",
+    "auth_url": "https://auth-dev-saas.facctum.com/oauth/token",
     "tenant_id": "Facctum",
     "timeout_seconds": 30,
 }
@@ -110,7 +110,7 @@ def get_interactive_config() -> dict:
             "auth_url": Prompt.ask("Auth URL", default=DEFAULT_CONFIG["auth_url"]),
             "client_id": Prompt.ask("Client ID"),
             "client_secret": Prompt.ask("Client Secret"),
-            "audience": Prompt.ask("Audience", default="https://api-qa-saas.facctum.com"),
+            "audience": Prompt.ask("Audience", default="https://api-dev-saas.facctum.com"),
         }
 
     # Test type selection

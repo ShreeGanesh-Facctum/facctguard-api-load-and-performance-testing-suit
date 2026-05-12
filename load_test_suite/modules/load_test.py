@@ -96,7 +96,7 @@ class LoadTestEngine:
         headers: dict,
         token: str,
         timeout_seconds: int = 30,
-        tenant_id: str = "Facctum",
+        tenant_id: str = "facctum",
     ):
         self.target_url = target_url
         self.base_headers = {

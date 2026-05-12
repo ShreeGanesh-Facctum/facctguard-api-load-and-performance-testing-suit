@@ -47,11 +47,11 @@
     "defaults": {
         "target_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/facctguard",
         "healthcheck_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/healthcheck",
-        "auth_url": "https://auth-qa-saas.facctum.com/oauth/token",
+        "auth_url": "https://auth-dev-saas.facctum.com/oauth/token",
         "tenant_id": "facctum",
         "auth_client_id": "",
         "auth_client_secret": "",
-        "auth_audience": "https://api-qa-saas.facctum.com",
+        "auth_audience": "https://api-dev-saas.facctum.com",
         "timeout_seconds": 30,
         "pass_fail_criteria": {
             "max_p95_ms": 2000,

@@ -34,7 +34,7 @@ class ResponseValidator:
     EXPECTED_ERROR_FIELDS = {"component", "message", "detailed_error"}
     VALID_STATUSES = {"Red", "Green"}
 
-    def __init__(self, tenant_id: str = "Facctum"):
+    def __init__(self, tenant_id: str = "facctum"):
         self.tenant_id = tenant_id
         self.results: list[ValidationResult] = []
         self.response_structures_seen: list[set] = []
