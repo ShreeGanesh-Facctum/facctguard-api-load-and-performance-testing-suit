@@ -197,7 +197,7 @@ def build_transaction(index, is_fraud=False):
                     },
                 },
             },
-            "TenantDetails": {"tenant_id": "Facctum"},
+            "TenantDetails": {"tenant_id": "facctum"},
             "OrderingParty": {
                 "PartyIdentification": {
                     "Name": name,

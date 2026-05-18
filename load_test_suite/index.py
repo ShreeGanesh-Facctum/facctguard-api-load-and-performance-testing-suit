@@ -38,17 +38,17 @@ console = Console()
 
 # Default configuration
 DEFAULT_CONFIG = {
-    "target_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/facctguard",
-    "healthcheck_url": "https://api-dev-saas.facctum.com/transactionmonitoring/api/healthcheck",
-    "auth_url": "https://auth-dev-saas.facctum.com/oauth/token",
-    "tenant_id": "Facctum",
+    "target_url": "https://api-qa-saas.facctum.com/transactionmonitoring/api/facctguard",
+    "healthcheck_url": "https://api-qa-saas.facctum.com/transactionmonitoring/api/healthcheck",
+    "auth_url": "https://auth-qa-saas.facctum.com/oauth/token",
+    "tenant_id": "facctum",
     "timeout_seconds": 30,
 }
 
 HEADERS = {
     "Content-Type": "application/json",
     "User-Agent": "insomnia/12.5.0",
-    "x-tenant-id": "Facctum",
+    "x-tenant-id": "facctum",
 }
 
 
@@ -93,7 +93,7 @@ def get_interactive_config() -> dict:
     )
 
     # Tenant ID
-    tenant_id = Prompt.ask("Tenant ID", default="Facctum")
+    tenant_id = Prompt.ask("Tenant ID", default="facctum")
 
     # Auth method
     console.print("\n[bold]Authentication:[/bold]")
@@ -110,7 +110,7 @@ def get_interactive_config() -> dict:
             "auth_url": Prompt.ask("Auth URL", default=DEFAULT_CONFIG["auth_url"]),
             "client_id": Prompt.ask("Client ID"),
             "client_secret": Prompt.ask("Client Secret"),
-            "audience": Prompt.ask("Audience", default="https://api-dev-saas.facctum.com"),
+            "audience": Prompt.ask("Audience", default="https://api-qa-saas.facctum.com"),
         }
 
     # Test type selection
@@ -342,51 +342,81 @@ async def run_tests(config: dict):
 def main():
     """Entry point."""
     parser = argparse.ArgumentParser(description="FacctGuard Load Test Suite")
-    parser.add_argument("--profile", type=str, help="Test profile: smoke, load, stress, endurance, breakpoint")
+    parser.add_argument("--profile", type=str, help="Test profile: smoke, load, stress, endurance, breakpoint, custom")
     parser.add_argument("--config", type=str, help="Path to config JSON file")
     parser.add_argument("--token", type=str, help="Bearer token (skip interactive auth)")
     parser.add_argument("--url", type=str, help="Target API URL")
     parser.add_argument("--tenant", type=str, help="Tenant ID")
     parser.add_argument("--requests", type=int, help="Total requests (overrides profile)")
     parser.add_argument("--concurrency", type=int, help="Concurrency level (overrides profile)")
+    parser.add_argument("--duration", type=int, help="Test duration in seconds (overrides profile)")
+    parser.add_argument("--test-types", type=str, help="Comma-separated test types: baseline,ramp_up,spike,sustained,stress,breakpoint,recovery,race_condition")
     parser.add_argument("--fraud-pct", type=int, default=40, help="Percentage of fraud transactions (0-100)")
+    parser.add_argument("--p95", type=int, help="Max P95 response time threshold (ms)")
+    parser.add_argument("--p99", type=int, help="Max P99 response time threshold (ms)")
+    parser.add_argument("--max-error-rate", type=float, help="Max error rate threshold (%%)")
+    parser.add_argument("--min-rps", type=float, help="Min throughput threshold (req/s)")
+    parser.add_argument("--timeout", type=int, help="Request timeout in seconds (default: 30)")
+    # Auth0 client credentials (alternative to --token)
+    parser.add_argument("--client-id", type=str, help="Auth0 client ID (use instead of --token)")
+    parser.add_argument("--client-secret", type=str, help="Auth0 client secret (use with --client-id)")
+    parser.add_argument("--auth-url", type=str, help="Auth0 token URL (default: from config)")
+    parser.add_argument("--audience", type=str, help="Auth0 audience (default: from config)")
     args = parser.parse_args()
 
     print_banner()
 
     # Determine if running in CLI mode or interactive mode
-    if args.profile or args.token:
+    if args.profile or args.token or args.client_id:
         # CLI mode - build config from args
         file_config = {}
         if args.config:
             file_config = load_config(args.config)
 
-        profile = args.profile or "load"
+        profile = args.profile or "custom"
         profile_config = get_profile_config(profile, file_config)
 
+        # Override profile config with CLI args
         if args.requests:
             profile_config["total_requests"] = args.requests
         if args.concurrency:
             profile_config["concurrency"] = args.concurrency
+        if args.duration:
+            profile_config["duration_seconds"] = args.duration
+        if args.test_types:
+            profile_config["test_types"] = [t.strip() for t in args.test_types.split(",")]
+
+        # Build thresholds from CLI args or config file
+        config_thresholds = file_config.get("defaults", {}).get("pass_fail_criteria", {})
+        thresholds = {
+            "max_p95_ms": args.p95 or config_thresholds.get("max_p95_ms", 2000),
+            "max_p99_ms": args.p99 or config_thresholds.get("max_p99_ms", 5000),
+            "max_error_rate_percent": args.max_error_rate if args.max_error_rate is not None else config_thresholds.get("max_error_rate_percent", 5),
+            "min_throughput_rps": args.min_rps if args.min_rps is not None else config_thresholds.get("min_throughput_rps", 1),
+        }
+
+        # Build auth config if client credentials provided
+        auth_config = {}
+        if args.client_id and args.client_secret:
+            auth_config = {
+                "auth_url": args.auth_url or DEFAULT_CONFIG["auth_url"],
+                "client_id": args.client_id,
+                "client_secret": args.client_secret,
+                "audience": args.audience or "https://api-qa-saas.facctum.com",
+            }
 
         config = {
             "target_url": args.url or DEFAULT_CONFIG["target_url"],
             "healthcheck_url": DEFAULT_CONFIG["healthcheck_url"],
-            "tenant_id": args.tenant or "Facctum",
+            "tenant_id": args.tenant or "facctum",
             "token": args.token or "",
-            "auth_config": {},
-            "profile": profile,
-            "custom_config": profile_config if profile == "custom" else {},
+            "auth_config": auth_config,
+            "profile": "custom" if (args.requests or args.duration or args.test_types) else profile,
+            "custom_config": profile_config,
             "fraud_percentage": args.fraud_pct,
-            "thresholds": file_config.get("defaults", {}).get("pass_fail_criteria", {}),
+            "thresholds": thresholds,
+            "timeout_seconds": args.timeout or 30,
         }
-
-        if profile != "custom":
-            # Override profile config with CLI args
-            file_config_copy = dict(file_config)
-            if "profiles" not in file_config_copy:
-                file_config_copy["profiles"] = {}
-            file_config_copy["profiles"][profile] = profile_config
     else:
         # Interactive mode
         config = get_interactive_config()
