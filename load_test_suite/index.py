@@ -158,6 +158,7 @@ def get_interactive_config() -> dict:
     thresholds = {}
     if use_custom_thresholds:
         thresholds = {
+            "max_p90_ms": IntPrompt.ask("Max P90 response time (ms)", default=1000),
             "max_p95_ms": IntPrompt.ask("Max P95 response time (ms)", default=2000),
             "max_p99_ms": IntPrompt.ask("Max P99 response time (ms)", default=5000),
             "max_error_rate_percent": IntPrompt.ask("Max error rate (%)", default=5),
@@ -329,10 +330,27 @@ async def run_tests(config: dict):
         "min_throughput_rps": 1,
     }
 
+    # Build test configuration metadata for the report
+    test_config_meta = {
+        "profile": profile,
+        "target_url": target_url,
+        "healthcheck_url": healthcheck_url,
+        "tenant_id": tenant_id,
+        "total_requests": total_requests,
+        "concurrency": concurrency,
+        "duration_seconds": duration,
+        "test_types": test_types,
+        "fraud_percentage": fraud_percentage,
+        "timeout_seconds": config.get("timeout_seconds", 30),
+        "pass_fail_criteria": thresholds,
+        "auth_method": "OAuth2 Client Credentials" if config.get("auth_config") else "Bearer Token",
+    }
+
     reporter = ReportGenerator(
         results=engine.all_results,
         pass_fail_criteria=thresholds,
         output_dir=os.path.join(os.path.dirname(__file__), "results"),
+        test_config=test_config_meta,
     )
     passed = reporter.generate_all_reports()
 
@@ -352,6 +370,7 @@ def main():
     parser.add_argument("--duration", type=int, help="Test duration in seconds (overrides profile)")
     parser.add_argument("--test-types", type=str, help="Comma-separated test types: baseline,ramp_up,spike,sustained,stress,breakpoint,recovery,race_condition")
     parser.add_argument("--fraud-pct", type=int, default=40, help="Percentage of fraud transactions (0-100)")
+    parser.add_argument("--p90", type=int, help="Max P90 response time threshold (ms)")
     parser.add_argument("--p95", type=int, help="Max P95 response time threshold (ms)")
     parser.add_argument("--p99", type=int, help="Max P99 response time threshold (ms)")
     parser.add_argument("--max-error-rate", type=float, help="Max error rate threshold (%%)")
@@ -389,6 +408,7 @@ def main():
         # Build thresholds from CLI args or config file
         config_thresholds = file_config.get("defaults", {}).get("pass_fail_criteria", {})
         thresholds = {
+            "max_p90_ms": args.p90 or config_thresholds.get("max_p90_ms", 1000),
             "max_p95_ms": args.p95 or config_thresholds.get("max_p95_ms", 2000),
             "max_p99_ms": args.p99 or config_thresholds.get("max_p99_ms", 5000),
             "max_error_rate_percent": args.max_error_rate if args.max_error_rate is not None else config_thresholds.get("max_error_rate_percent", 5),

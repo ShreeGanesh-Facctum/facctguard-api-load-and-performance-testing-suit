@@ -162,6 +162,18 @@ class ReportGenerator:
         for scenario in self.results:
             verdict = {"scenario": scenario.scenario_name, "checks": {}, "pass": True}
 
+            # P90 check
+            if "max_p90_ms" in self.criteria:
+                p90 = scenario.percentile(90)
+                p90_pass = p90 <= self.criteria["max_p90_ms"]
+                verdict["checks"]["p90_ms"] = {
+                    "value": round(p90, 1),
+                    "threshold": self.criteria["max_p90_ms"],
+                    "pass": p90_pass,
+                }
+                if not p90_pass:
+                    verdict["pass"] = False
+
             p95 = scenario.percentile(95)
             p95_pass = p95 <= self.criteria["max_p95_ms"]
             verdict["checks"]["p95_ms"] = {
@@ -218,6 +230,9 @@ class ReportGenerator:
             subtitle=f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         ))
 
+        # Test Configuration
+        self._print_test_configuration()
+
         # Executive Summary
         self._print_executive_summary()
 
@@ -231,6 +246,7 @@ class ReportGenerator:
         summary_table.add_column("RPS", justify="right")
         summary_table.add_column("Avg(ms)", justify="right")
         summary_table.add_column("P50(ms)", justify="right")
+        summary_table.add_column("P90(ms)", justify="right")
         summary_table.add_column("P95(ms)", justify="right")
         summary_table.add_column("P99(ms)", justify="right")
         summary_table.add_column("Max(ms)", justify="right")
@@ -254,6 +270,7 @@ class ReportGenerator:
                 f"{s.throughput_rps:.2f}",
                 f"{avg:.0f}",
                 f"{s.percentile(50):.0f}",
+                f"{s.percentile(90):.0f}",
                 f"{s.percentile(95):.0f}",
                 f"{s.percentile(99):.0f}",
                 f"{max(s.response_times):.0f}" if s.response_times else "0",
@@ -308,6 +325,35 @@ class ReportGenerator:
         # Pass/Fail verdict
         verdict = self.evaluate_pass_fail()
         self._print_verdict(verdict)
+
+    def _print_test_configuration(self):
+        """Print the test configuration used for this run."""
+        if not self.test_config:
+            return
+
+        config_table = Table(title="Test Configuration", show_lines=False)
+        config_table.add_column("Parameter", style="cyan", min_width=20)
+        config_table.add_column("Value", style="white")
+
+        config_table.add_row("Profile", str(self.test_config.get("profile", "N/A")))
+        config_table.add_row("Target URL", str(self.test_config.get("target_url", "N/A")))
+        config_table.add_row("Tenant ID", str(self.test_config.get("tenant_id", "N/A")))
+        config_table.add_row("Auth Method", str(self.test_config.get("auth_method", "N/A")))
+        config_table.add_row("Total Requests", str(self.test_config.get("total_requests", "N/A")))
+        config_table.add_row("Concurrency", str(self.test_config.get("concurrency", "N/A")))
+        config_table.add_row("Duration", f"{self.test_config.get('duration_seconds', 'N/A')}s")
+        config_table.add_row("Test Types", ", ".join(self.test_config.get("test_types", [])))
+        config_table.add_row("Fraud %", f"{self.test_config.get('fraud_percentage', 'N/A')}%")
+        config_table.add_row("Timeout", f"{self.test_config.get('timeout_seconds', 30)}s")
+
+        criteria = self.test_config.get("pass_fail_criteria", {})
+        if criteria:
+            config_table.add_row("P95 Threshold", f"{criteria.get('max_p95_ms', 'N/A')} ms")
+            config_table.add_row("P99 Threshold", f"{criteria.get('max_p99_ms', 'N/A')} ms")
+            config_table.add_row("Max Error Rate", f"{criteria.get('max_error_rate_percent', 'N/A')}%")
+            config_table.add_row("Min Throughput", f"{criteria.get('min_throughput_rps', 'N/A')} req/s")
+
+        console.print(config_table)
 
     def _print_executive_summary(self):
         """Print a one-paragraph executive summary."""
@@ -541,7 +587,7 @@ class ReportGenerator:
                 <td class="pass">{s.successful}</td><td class="fail">{s.failed}</td>
                 <td class="{err_class}">{s.error_rate:.1f}%</td>
                 <td>{s.throughput_rps:.2f}</td><td>{avg:.0f}</td>
-                <td>{s.percentile(50):.0f}</td><td>{s.percentile(95):.0f}</td>
+                <td>{s.percentile(50):.0f}</td><td>{s.percentile(90):.0f}</td><td>{s.percentile(95):.0f}</td>
                 <td>{s.percentile(99):.0f}</td>
                 <td>{max(s.response_times):.0f}</td>
                 <td class="{apdex_class}">{apdex:.2f}</td>
@@ -708,7 +754,29 @@ canvas {{ max-height: 350px; }}
 <h1>FacctGuard Load Test Report</h1>
 <p class="subtitle">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Duration: {total_duration:.0f}s | Scenarios: {len(self.results)}</p>
 
-<div class="verdict {overall_class}">OVERALL VERDICT: {"PASS \u2713" if verdict["overall_pass"] else "FAIL \u2717"}</div>
+<div class="verdict {overall_class}">OVERALL VERDICT: {"PASS" if verdict["overall_pass"] else "FAIL"}</div>
+
+<!-- Test Configuration -->
+<h2>Test Configuration</h2>
+<div class="config-section">
+<table>
+<tr><th style="text-align:left">Parameter</th><th style="text-align:left">Value</th></tr>
+<tr><td style="text-align:left">Profile</td><td style="text-align:left">{self.test_config.get("profile", "N/A")}</td></tr>
+<tr><td style="text-align:left">Target URL</td><td style="text-align:left"><code>{self.test_config.get("target_url", "N/A")}</code></td></tr>
+<tr><td style="text-align:left">Tenant ID</td><td style="text-align:left">{self.test_config.get("tenant_id", "N/A")}</td></tr>
+<tr><td style="text-align:left">Auth Method</td><td style="text-align:left">{self.test_config.get("auth_method", "N/A")}</td></tr>
+<tr><td style="text-align:left">Total Requests</td><td style="text-align:left">{self.test_config.get("total_requests", "N/A")}</td></tr>
+<tr><td style="text-align:left">Concurrency</td><td style="text-align:left">{self.test_config.get("concurrency", "N/A")}</td></tr>
+<tr><td style="text-align:left">Duration</td><td style="text-align:left">{self.test_config.get("duration_seconds", "N/A")}s</td></tr>
+<tr><td style="text-align:left">Test Types</td><td style="text-align:left">{", ".join(self.test_config.get("test_types", []))}</td></tr>
+<tr><td style="text-align:left">Fraud %</td><td style="text-align:left">{self.test_config.get("fraud_percentage", "N/A")}%</td></tr>
+<tr><td style="text-align:left">Timeout</td><td style="text-align:left">{self.test_config.get("timeout_seconds", 30)}s</td></tr>
+<tr><td style="text-align:left">P95 Threshold</td><td style="text-align:left">{self.test_config.get("pass_fail_criteria", {}).get("max_p95_ms", "N/A")} ms</td></tr>
+<tr><td style="text-align:left">P99 Threshold</td><td style="text-align:left">{self.test_config.get("pass_fail_criteria", {}).get("max_p99_ms", "N/A")} ms</td></tr>
+<tr><td style="text-align:left">Max Error Rate</td><td style="text-align:left">{self.test_config.get("pass_fail_criteria", {}).get("max_error_rate_percent", "N/A")}%</td></tr>
+<tr><td style="text-align:left">Min Throughput</td><td style="text-align:left">{self.test_config.get("pass_fail_criteria", {}).get("min_throughput_rps", "N/A")} req/s</td></tr>
+</table>
+</div>
 
 <!-- Executive Summary -->
 <div class="executive-summary">
@@ -730,6 +798,20 @@ SLA compliance (&lt;{self.sla_threshold_ms:.0f}ms): <strong>{overall_sla:.1f}%</
     <div class="metric-card"><div class="value">{std_dev:.0f}ms</div><div class="label">Std Deviation</div></div>
     <div class="metric-card"><div class="value">{total_duration:.0f}s</div><div class="label">Test Duration</div></div>
 </div>
+
+<!-- Expected vs Actual Comparison -->
+<h2>Expected vs Actual Comparison</h2>
+<table>
+<tr><th style="text-align:left">Metric</th><th>Expected (SLA)</th><th>Actual</th><th>Status</th></tr>
+<tr><td style="text-align:left">P90 Response Time</td><td>&lt;= {self.criteria.get("max_p90_ms", 1000)} ms</td><td>{sorted(all_times)[int(len(all_times) * 0.90)] if all_times else 0:.0f} ms</td><td class="{'pass' if (sorted(all_times)[int(len(all_times) * 0.90)] if all_times else 0) <= self.criteria.get('max_p90_ms', 1000) else 'fail'}">{'PASS' if (sorted(all_times)[int(len(all_times) * 0.90)] if all_times else 0) <= self.criteria.get('max_p90_ms', 1000) else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">P95 Response Time</td><td>&lt;= {self.criteria.get("max_p95_ms", 2000)} ms</td><td>{sorted(all_times)[int(len(all_times) * 0.95)] if all_times else 0:.0f} ms</td><td class="{'pass' if (sorted(all_times)[int(len(all_times) * 0.95)] if all_times else 0) <= self.criteria.get('max_p95_ms', 2000) else 'fail'}">{'PASS' if (sorted(all_times)[int(len(all_times) * 0.95)] if all_times else 0) <= self.criteria.get('max_p95_ms', 2000) else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">P99 Response Time</td><td>&lt;= {self.criteria.get("max_p99_ms", 5000)} ms</td><td>{sorted(all_times)[int(len(all_times) * 0.99)] if all_times else 0:.0f} ms</td><td class="{'pass' if (sorted(all_times)[int(len(all_times) * 0.99)] if all_times else 0) <= self.criteria.get('max_p99_ms', 5000) else 'fail'}">{'PASS' if (sorted(all_times)[int(len(all_times) * 0.99)] if all_times else 0) <= self.criteria.get('max_p99_ms', 5000) else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">Error Rate</td><td>&lt;= {self.criteria.get("max_error_rate_percent", 5)}%</td><td>{overall_error_rate:.2f}%</td><td class="{'pass' if overall_error_rate <= self.criteria.get('max_error_rate_percent', 5) else 'fail'}">{'PASS' if overall_error_rate <= self.criteria.get('max_error_rate_percent', 5) else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">Throughput (RPS)</td><td>&gt;= {self.criteria.get("min_throughput_rps", 1)} req/s</td><td>{avg_rps:.2f} req/s</td><td class="{'pass' if avg_rps >= self.criteria.get('min_throughput_rps', 1) else 'fail'}">{'PASS' if avg_rps >= self.criteria.get('min_throughput_rps', 1) else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">Apdex Score (T={self.apdex_threshold_ms:.0f}ms)</td><td>&gt;= 0.90</td><td>{overall_apdex:.3f}</td><td class="{'pass' if overall_apdex >= 0.9 else 'fail'}">{'PASS' if overall_apdex >= 0.9 else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">SLA Compliance (&lt;{self.sla_threshold_ms:.0f}ms)</td><td>&gt;= 95%</td><td>{overall_sla:.1f}%</td><td class="{'pass' if overall_sla >= 95 else 'fail'}">{'PASS' if overall_sla >= 95 else 'FAIL'}</td></tr>
+<tr><td style="text-align:left">Avg Response Time</td><td>&lt;= {self.criteria.get("max_p95_ms", 2000)} ms</td><td>{avg_rt:.0f} ms</td><td class="{'pass' if avg_rt <= self.criteria.get('max_p95_ms', 2000) else 'fail'}">{'PASS' if avg_rt <= self.criteria.get('max_p95_ms', 2000) else 'FAIL'}</td></tr>
+</table>
 
 <!-- Charts -->
 <h2>Performance Charts</h2>
@@ -764,7 +846,7 @@ SLA compliance (&lt;{self.sla_threshold_ms:.0f}ms): <strong>{overall_sla:.1f}%</
 <h2>Scenario Summary</h2>
 <div class="table-scroll">
 <table><tr><th style="text-align:left">Scenario</th><th>Total</th><th>Success</th><th>Failed</th><th>Err%</th>
-<th>RPS</th><th>Avg(ms)</th><th>P50</th><th>P95</th><th>P99</th><th>Max</th><th>Apdex</th><th>SLA%</th></tr>
+<th>RPS</th><th>Avg(ms)</th><th>P50</th><th>P90</th><th>P95</th><th>P99</th><th>Max</th><th>Apdex</th><th>SLA%</th></tr>
 {rows_html}</table>
 </div>
 
@@ -983,8 +1065,313 @@ new Chart(scCtx, {{
     def generate_all_reports(self):
         """Generate all report formats."""
         self.print_console_report()
+        self._print_comparison_summary()
         self.export_json()
         self.export_csv()
         self.export_html()
+        self._export_terminal_log()
         console.print(f"\n[bold green]All reports saved to: {self.output_dir}/[/bold green]")
         return self.evaluate_pass_fail()["overall_pass"]
+
+    def _print_comparison_summary(self):
+        """Print Expected vs Actual comparison table."""
+        console.print()
+        console.print(Panel("[bold]Expected vs Actual — Comparison Summary[/bold]", style="magenta"))
+
+        comp_table = Table(title="SLA Comparison", show_lines=True)
+        comp_table.add_column("Metric", style="cyan", min_width=25)
+        comp_table.add_column("Expected (SLA)", justify="right", style="yellow")
+        comp_table.add_column("Actual", justify="right")
+        comp_table.add_column("Status", justify="center")
+
+        # Gather actuals
+        all_times = []
+        total_requests = 0
+        total_failed = 0
+        total_duration = 0
+        for s in self.results:
+            all_times.extend(s.response_times)
+            total_requests += s.total_requests
+            total_failed += s.failed
+            total_duration = max(total_duration, s.duration_seconds)
+
+        if not all_times:
+            console.print("[yellow]No data to compare[/yellow]")
+            return
+
+        actual_p90 = sorted(all_times)[int(len(all_times) * 0.90)] if all_times else 0
+        actual_p95 = sorted(all_times)[int(len(all_times) * 0.95)] if all_times else 0
+        actual_p99 = sorted(all_times)[int(len(all_times) * 0.99)] if all_times else 0
+        actual_error_rate = (total_failed / total_requests * 100) if total_requests > 0 else 0
+        actual_rps = total_requests / total_duration if total_duration > 0 else 0
+        actual_avg = sum(all_times) / len(all_times) if all_times else 0
+        actual_max = max(all_times) if all_times else 0
+        actual_apdex = self.calculate_apdex(all_times)
+        actual_sla = self.calculate_sla_compliance(all_times)
+
+        # Expected thresholds
+        exp_p90 = self.criteria.get("max_p90_ms", 1000)
+        exp_p95 = self.criteria.get("max_p95_ms", 2000)
+        exp_p99 = self.criteria.get("max_p99_ms", 5000)
+        exp_error = self.criteria.get("max_error_rate_percent", 5)
+        exp_rps = self.criteria.get("min_throughput_rps", 1)
+
+        def status_icon(passed: bool) -> str:
+            return "[green]PASS[/green]" if passed else "[red]FAIL[/red]"
+
+        if "max_p90_ms" in self.criteria:
+            comp_table.add_row(
+                "P90 Response Time",
+                f"<= {exp_p90} ms",
+                f"{actual_p90:.0f} ms",
+                status_icon(actual_p90 <= exp_p90),
+            )
+        comp_table.add_row(
+            "P95 Response Time",
+            f"<= {exp_p95} ms",
+            f"{actual_p95:.0f} ms",
+            status_icon(actual_p95 <= exp_p95),
+        )
+        comp_table.add_row(
+            "P99 Response Time",
+            f"<= {exp_p99} ms",
+            f"{actual_p99:.0f} ms",
+            status_icon(actual_p99 <= exp_p99),
+        )
+        comp_table.add_row(
+            "Error Rate",
+            f"<= {exp_error}%",
+            f"{actual_error_rate:.2f}%",
+            status_icon(actual_error_rate <= exp_error),
+        )
+        comp_table.add_row(
+            "Throughput (RPS)",
+            f">= {exp_rps} req/s",
+            f"{actual_rps:.2f} req/s",
+            status_icon(actual_rps >= exp_rps),
+        )
+        comp_table.add_row(
+            "Avg Response Time",
+            f"<= {exp_p95} ms",
+            f"{actual_avg:.0f} ms",
+            status_icon(actual_avg <= exp_p95),
+        )
+        comp_table.add_row(
+            "Max Response Time",
+            f"<= {exp_p99 * 2} ms",
+            f"{actual_max:.0f} ms",
+            status_icon(actual_max <= exp_p99 * 2),
+        )
+        comp_table.add_row(
+            "Apdex Score (T={:.0f}ms)".format(self.apdex_threshold_ms),
+            ">= 0.90",
+            f"{actual_apdex:.3f}",
+            status_icon(actual_apdex >= 0.9),
+        )
+        comp_table.add_row(
+            "SLA Compliance (<{:.0f}ms)".format(self.sla_threshold_ms),
+            ">= 95%",
+            f"{actual_sla:.1f}%",
+            status_icon(actual_sla >= 95),
+        )
+        comp_table.add_row(
+            "Total Requests",
+            f"{total_requests}",
+            f"{total_requests}",
+            "[green]--[/green]",
+        )
+        comp_table.add_row(
+            "Test Duration",
+            f"{total_duration:.0f}s",
+            f"{total_duration:.0f}s",
+            "[green]--[/green]",
+        )
+
+        console.print(comp_table)
+
+    def _export_terminal_log(self):
+        """Capture and save all terminal output to a text file."""
+        filepath = os.path.join(self.output_dir, f"loadtest_{self.timestamp}_terminal.txt")
+
+        # Re-render the full report to a string using Rich's string export
+        from io import StringIO
+        from rich.console import Console as StringConsole
+
+        string_console = StringConsole(file=StringIO(), width=120, force_terminal=True, no_color=True)
+
+        # Reproduce the full report to the string console
+        string_console.print()
+        string_console.print("=" * 80)
+        string_console.print("  FACCTGUARD LOAD TEST REPORT")
+        string_console.print(f"  Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        string_console.print("=" * 80)
+
+        # Test Configuration
+        if self.test_config:
+            string_console.print(f"\n{'─' * 80}")
+            string_console.print("  TEST CONFIGURATION")
+            string_console.print(f"{'─' * 80}")
+            string_console.print(f"  {'Profile:':<20s} {self.test_config.get('profile', 'N/A')}")
+            string_console.print(f"  {'Target URL:':<20s} {self.test_config.get('target_url', 'N/A')}")
+            string_console.print(f"  {'Tenant ID:':<20s} {self.test_config.get('tenant_id', 'N/A')}")
+            string_console.print(f"  {'Auth Method:':<20s} {self.test_config.get('auth_method', 'N/A')}")
+            string_console.print(f"  {'Total Requests:':<20s} {self.test_config.get('total_requests', 'N/A')}")
+            string_console.print(f"  {'Concurrency:':<20s} {self.test_config.get('concurrency', 'N/A')}")
+            string_console.print(f"  {'Duration:':<20s} {self.test_config.get('duration_seconds', 'N/A')}s")
+            string_console.print(f"  {'Test Types:':<20s} {', '.join(self.test_config.get('test_types', []))}")
+            string_console.print(f"  {'Fraud %:':<20s} {self.test_config.get('fraud_percentage', 'N/A')}%")
+            string_console.print(f"  {'Timeout:':<20s} {self.test_config.get('timeout_seconds', 30)}s")
+            criteria = self.test_config.get("pass_fail_criteria", {})
+            if criteria:
+                string_console.print(f"  {'P95 Threshold:':<20s} {criteria.get('max_p95_ms', 'N/A')} ms")
+                string_console.print(f"  {'P99 Threshold:':<20s} {criteria.get('max_p99_ms', 'N/A')} ms")
+                string_console.print(f"  {'Max Error Rate:':<20s} {criteria.get('max_error_rate_percent', 'N/A')}%")
+                string_console.print(f"  {'Min Throughput:':<20s} {criteria.get('min_throughput_rps', 'N/A')} req/s")
+
+        # Executive summary
+        all_times = []
+        total_requests = 0
+        total_failed = 0
+        total_duration = 0
+        for s in self.results:
+            all_times.extend(s.response_times)
+            total_requests += s.total_requests
+            total_failed += s.failed
+            total_duration = max(total_duration, s.duration_seconds)
+
+        if all_times:
+            overall_apdex = self.calculate_apdex(all_times)
+            overall_sla = self.calculate_sla_compliance(all_times)
+            overall_error_rate = (total_failed / total_requests * 100) if total_requests > 0 else 0
+            avg_rps = total_requests / total_duration if total_duration > 0 else 0
+            verdict = self.evaluate_pass_fail()
+
+            string_console.print(f"\n  EXECUTIVE SUMMARY")
+            string_console.print(f"  Requests: {total_requests} | Duration: {total_duration:.0f}s | RPS: {avg_rps:.1f}")
+            string_console.print(f"  Error Rate: {overall_error_rate:.1f}% | Apdex: {overall_apdex:.2f} (T={self.apdex_threshold_ms:.0f}ms)")
+            string_console.print(f"  SLA Compliance (<{self.sla_threshold_ms:.0f}ms): {overall_sla:.1f}%")
+            string_console.print(f"  VERDICT: {'PASS' if verdict['overall_pass'] else 'FAIL'}")
+
+        # Scenario details
+        string_console.print(f"\n{'─' * 80}")
+        string_console.print("  SCENARIO SUMMARY")
+        string_console.print(f"{'─' * 80}")
+        header = f"  {'Scenario':<25s} {'Total':>7s} {'OK':>6s} {'Fail':>6s} {'Err%':>7s} {'RPS':>7s} {'Avg':>7s} {'P50':>7s} {'P90':>7s} {'P95':>7s} {'P99':>7s} {'Max':>7s}"
+        string_console.print(header)
+        string_console.print("  " + "-" * 100)
+
+        for s in self.results:
+            avg = sum(s.response_times) / len(s.response_times) if s.response_times else 0
+            line = (
+                f"  {s.scenario_name:<25s} {s.total_requests:>7d} {s.successful:>6d} {s.failed:>6d} "
+                f"{s.error_rate:>6.1f}% {s.throughput_rps:>6.2f} {avg:>6.0f} "
+                f"{s.percentile(50):>6.0f} {s.percentile(90):>6.0f} {s.percentile(95):>6.0f} {s.percentile(99):>6.0f} "
+                f"{max(s.response_times):>6.0f}" if s.response_times else ""
+            )
+            string_console.print(line)
+
+        # Expected vs Actual comparison
+        string_console.print(f"\n{'─' * 80}")
+        string_console.print("  EXPECTED vs ACTUAL COMPARISON")
+        string_console.print(f"{'─' * 80}")
+        string_console.print(f"  {'Metric':<30s} {'Expected':<20s} {'Actual':<20s} {'Status':<10s}")
+        string_console.print("  " + "-" * 80)
+
+        if all_times:
+            actual_p95 = sorted(all_times)[int(len(all_times) * 0.95)]
+            actual_p99 = sorted(all_times)[int(len(all_times) * 0.99)]
+            actual_error_rate = (total_failed / total_requests * 100) if total_requests > 0 else 0
+            actual_rps = total_requests / total_duration if total_duration > 0 else 0
+
+            exp_p95 = self.criteria.get("max_p95_ms", 2000)
+            exp_p99 = self.criteria.get("max_p99_ms", 5000)
+            exp_error = self.criteria.get("max_error_rate_percent", 5)
+            exp_rps = self.criteria.get("min_throughput_rps", 1)
+
+            comparisons = [
+                ("P90 Response Time", f"<= {self.criteria.get('max_p90_ms', 1000)} ms", f"{sorted(all_times)[int(len(all_times) * 0.90)]:.0f} ms", sorted(all_times)[int(len(all_times) * 0.90)] <= self.criteria.get('max_p90_ms', 1000)),
+                ("P95 Response Time", f"<= {exp_p95} ms", f"{actual_p95:.0f} ms", actual_p95 <= exp_p95),
+                ("P99 Response Time", f"<= {exp_p99} ms", f"{actual_p99:.0f} ms", actual_p99 <= exp_p99),
+                ("Error Rate", f"<= {exp_error}%", f"{actual_error_rate:.2f}%", actual_error_rate <= exp_error),
+                ("Throughput (RPS)", f">= {exp_rps} req/s", f"{actual_rps:.2f} req/s", actual_rps >= exp_rps),
+                ("Apdex Score", ">= 0.90", f"{overall_apdex:.3f}", overall_apdex >= 0.9),
+                ("SLA Compliance", ">= 95%", f"{overall_sla:.1f}%", overall_sla >= 95),
+            ]
+
+            for metric, expected, actual, passed in comparisons:
+                status = "PASS" if passed else "FAIL"
+                string_console.print(f"  {metric:<30s} {expected:<20s} {actual:<20s} {status:<10s}")
+
+        # Error breakdown
+        all_errors = {}
+        for s in self.results:
+            for err, count in s.errors.items():
+                all_errors[err] = all_errors.get(err, 0) + count
+
+        if all_errors:
+            string_console.print(f"\n{'─' * 80}")
+            string_console.print("  ERROR BREAKDOWN")
+            string_console.print(f"{'─' * 80}")
+            for err, count in sorted(all_errors.items(), key=lambda x: x[1], reverse=True):
+                string_console.print(f"  {err}: {count}")
+
+        # Status codes
+        all_status_codes = {}
+        for s in self.results:
+            for code, count in s.status_codes.items():
+                all_status_codes[code] = all_status_codes.get(code, 0) + count
+
+        if all_status_codes:
+            string_console.print(f"\n{'─' * 80}")
+            string_console.print("  STATUS CODE DISTRIBUTION")
+            string_console.print(f"{'─' * 80}")
+            total_codes = sum(all_status_codes.values())
+            for code, count in sorted(all_status_codes.items()):
+                pct = count / total_codes * 100
+                string_console.print(f"  {code}: {count} ({pct:.1f}%)")
+
+        # Response time histogram
+        if all_times:
+            string_console.print(f"\n{'─' * 80}")
+            string_console.print("  RESPONSE TIME DISTRIBUTION")
+            string_console.print(f"{'─' * 80}")
+            buckets = [100, 200, 500, 1000, 2000, 5000, 10000, float("inf")]
+            bucket_labels = ["<100ms", "100-200ms", "200-500ms", "500ms-1s", "1-2s", "2-5s", "5-10s", ">10s"]
+            counts = [0] * len(buckets)
+            for t in all_times:
+                for i, b in enumerate(buckets):
+                    if t < b:
+                        counts[i] += 1
+                        break
+            max_count = max(counts) if counts else 1
+            for label, count in zip(bucket_labels, counts):
+                bar_len = int(count / max_count * 40) if max_count > 0 else 0
+                bar = "#" * bar_len
+                pct = count / len(all_times) * 100
+                string_console.print(f"  {label:>10s} | {bar:<40s} {count:>5d} ({pct:.1f}%)")
+
+        # Verdict
+        string_console.print(f"\n{'=' * 80}")
+        if verdict["overall_pass"]:
+            string_console.print("  OVERALL VERDICT: PASS")
+        else:
+            string_console.print("  OVERALL VERDICT: FAIL")
+
+        for name, v in verdict["scenarios"].items():
+            status = "PASS" if v["pass"] else "FAIL"
+            string_console.print(f"    {name}: {status}")
+            for check_name, check in v["checks"].items():
+                icon = "[OK]" if check["pass"] else "[X]"
+                string_console.print(f"      {icon} {check_name}: {check['value']} (threshold: {check['threshold']})")
+
+        string_console.print(f"\n{'=' * 80}")
+        string_console.print(f"  Report generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        string_console.print(f"  Output directory: {self.output_dir}")
+        string_console.print("=" * 80)
+
+        # Write to file
+        output_text = string_console.file.getvalue()
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(output_text)
+
+        console.print(f"[dim]Terminal log saved: {filepath}[/dim]")
